@@ -1,0 +1,7 @@
+{
+  "name": "FitZone",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
