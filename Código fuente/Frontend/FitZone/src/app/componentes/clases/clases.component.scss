@@ -1,0 +1,79 @@
+.clases-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 24px 0 8px 0;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.12);
+  margin-bottom: 8px;
+}
+
+.bienvenida {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  color: #7C4DFF;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.icono-bienvenida {
+  font-size: 1.5rem;
+  margin-right: 6px;
+}
+
+.clases-container {
+  padding: 16px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  min-height: 100vh;
+}
+
+.clase-card {
+  margin-bottom: 24px;
+  border-left: 8px solid #7C4DFF;
+  box-shadow: 0 4px 16px rgba(44, 62, 80, 0.08);
+  border-radius: 16px;
+  transition: box-shadow 0.2s;
+  &:hover {
+    box-shadow: 0 8px 24px rgba(44, 62, 80, 0.18);
+  }
+}
+
+.clase-nombre {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #212121;
+  display: flex;
+  align-items: center;
+}
+
+.clase-icono {
+  font-size: 1.5rem;
+  margin-right: 8px;
+  color: #7C4DFF;
+}
+
+.clase-descripcion {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.clase-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  color: #1976D2;
+}
+
+ion-button {
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+}
