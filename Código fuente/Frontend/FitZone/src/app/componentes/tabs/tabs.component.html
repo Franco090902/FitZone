@@ -1,69 +1,18 @@
-<ion-tabs>
-  <ion-tab tab="home">
-    <div id="home-page">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Inicio</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <div class="example-content">Inicio</div>
-      </ion-content>
-    </div>
-  </ion-tab>
-  <ion-tab tab="radio">
-    <div id="radio-page">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Clases</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <div class="example-content">Clases</div>
-      </ion-content>
-    </div>
-  </ion-tab>
-  <ion-tab tab="library">
-    <div id="library-page">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Entrenamiento</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <div class="example-content">Entrenamiento</div>
-      </ion-content>
-    </div>
-  </ion-tab>
-  <ion-tab tab="search">
-    <div id="search-page">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Cuenta</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <div class="example-content">Cuenta</div>
-      </ion-content>
-    </div>
-  </ion-tab>
-
-  <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="home">
-      <ion-icon name="playCircle"></ion-icon>
+<ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home" [routerLink]="['/home']">
+      <ion-icon name="playCircle" ></ion-icon>
      Inicio
     </ion-tab-button>
-    <ion-tab-button tab="radio">
+    <ion-tab-button tab="clases" [routerLink]="['/clases']">
       <ion-icon name="radio"></ion-icon>
       Clases
     </ion-tab-button>
-    <ion-tab-button tab="library">
+    <ion-tab-button tab="entrenamiento" [routerLink]="['/entrenamiento']">
      <ion-icon name="barbell-outline"></ion-icon>
       Entrenamiento
     </ion-tab-button>
-    <ion-tab-button tab="search">
+    <ion-tab-button tab="cuenta" [routerLink]="['/cuenta']">
       <ion-icon name="search"></ion-icon>
       Cuenta
     </ion-tab-button>
   </ion-tab-bar>
-</ion-tabs>
