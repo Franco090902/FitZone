@@ -1,0 +1,13 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Registro</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <form (ngSubmit)="register()">
+    <ion-input label="Email" type="email" [(ngModel)]="email" name="email" required></ion-input>
+    <ion-input label="Contraseña" type="password" [(ngModel)]="password" name="password" required></ion-input>
+    <ion-button expand="block" type="submit" color="primary">Registrarse</ion-button>
+    <ion-button expand="block" fill="clear" (click)="goToLogin()">¿Ya tienes cuenta? Inicia sesión</ion-button>
+  </form>
+</ion-content>

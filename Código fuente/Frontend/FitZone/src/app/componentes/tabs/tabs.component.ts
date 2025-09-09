@@ -12,7 +12,7 @@ import {
 } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { library, playCircle, radio, search,  } from 'ionicons/icons';
+import { library, playCircle, radio, search, cardOutline, } from 'ionicons/icons';
 @Component({
   selector: 'app-tabs',
   standalone: true,
@@ -27,7 +27,7 @@ import { library, playCircle, radio, search,  } from 'ionicons/icons';
 export class TabsComponent  implements OnInit {
 
   constructor() {
-    addIcons({ library, playCircle, radio, search, });
+    addIcons({ library, playCircle, radio, search, cardOutline});
    }
 
   ngOnInit() {}
