@@ -9,3 +9,12 @@ export const authGuard: CanActivateFn = (route, state) => {
     return false;
   }
 };
+
+export const gimnasioGuard: CanActivateFn = () => {
+  if (localStorage.getItem('auth') && localStorage.getItem('tipoUsuario') === 'gimnasio') {
+    return true;
+  } else {
+    window.location.href = '/login';
+    return false;
+  }
+};
