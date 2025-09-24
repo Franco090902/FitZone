@@ -44,12 +44,7 @@ export class ClasesComponent  implements OnInit {
   }
   
   contactarTrainer(trainer: any) {
-    if (trainer.capacidad > 0){
-    trainer.capacidad = trainer.capacidad -1;
-    alert (`Reservaste la clase: ${trainer.nombre}. Cupos restantes: ${trainer.capacidad}`);
-   } else{
-    alert('No quedan cupos disponibles para esta clase');
-   }
+    alert(`Reservaste la clase:  ${trainer.nombre}`) ;
   }
 
     reservarEspacio(espacio: any) {
