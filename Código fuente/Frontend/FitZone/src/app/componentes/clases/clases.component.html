@@ -4,7 +4,6 @@
       <ion-icon name="calendar-outline" style="vertical-align: middle; margin-right: 8px;"></ion-icon>
       FitZone
     </ion-title>
-    <img src="assets/Logo Fitzone.jpg" alt="FitZone Logo" class="logo" />
   </ion-toolbar>
 </ion-header>
 
@@ -15,7 +14,7 @@
       <ion-icon name="sparkles-outline" class="icono-bienvenida"></ion-icon>
       <span>¡Elegí tu próxima actividad!</span>
     </div>
-    <ion-segment [(ngModel)]="opcion" color="primary">
+    <ion-segment [(ngModel)]="opcion" color="primary" class="barraArriba">
       <ion-segment-button value="grupales">
         <ion-label><ion-icon name="people-outline"></ion-icon> Clases Grupales</ion-label>
       </ion-segment-button>
@@ -27,95 +26,95 @@
       </ion-segment-button>
     </ion-segment>
   </div>
-
-  <div class="clases-container">
+<div class="clases-container">
     <!-- Clases Grupales -->
     <ng-container *ngIf="opcion === 'grupales'">
-      <ion-card *ngFor="let clase of clases" [style.borderLeftColor]="clase.color" class="clase-card">
-        <ion-card-header>
-          <ion-card-title>
-            <span class="clase-nombre">
-              <ion-icon [name]="clase.icono" class="clase-icono"></ion-icon>
-              {{ clase.nombre }}
-            </span>
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="clase-descripcion">{{ clase.descripcion }}</div>
-          <div class="clase-info">
-            <span>
-              <ion-icon name="people-outline"></ion-icon>
-              <b>{{ clase.capacidad }}</b> cupos
-            </span>
-            <span>
-              <ion-icon name="calendar-outline"></ion-icon>
-              {{ clase.fecha_hora | date:'EEEE d/MM HH:mm' }}
-            </span>
+      <ion-accordion-group expand="single">
+        <ion-accordion *ngFor="let clase of clases" [value]="clase.id" class="accordion-card" [style.--accent-color]="clase.color">
+          <ion-item slot="header" color="light">
+            <ion-icon [name]="clase.icono" slot="start" class="clase-icono"></ion-icon>
+            <ion-label>
+              <span class="clase-nombre">{{ clase.nombre }}</span>
+            </ion-label>
+          </ion-item>
+          <div class="accordion-content" slot="content">
+            <div class="clase-descripcion">{{ clase.descripcion }}</div>
+            <div class="clase-info">
+              <span>
+                <ion-icon name="people-outline"></ion-icon>
+                <b>{{ clase.capacidad }}</b> cupos
+              </span>
+              <span>
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{ clase.fecha_hora | date:'EEEE d/MM HH:mm' }}
+              </span>
+            </div>
+            <ion-button expand="block" color="success" (click)="reservarClase(clase)">
+              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              Reservar
+            </ion-button>
           </div>
-          <ion-button expand="block" color="success" (click)="reservarClase(clase)">
-            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-            Reservar
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
+        </ion-accordion>
+      </ion-accordion-group>
     </ng-container>
 
     <!-- Trainers -->
     <ng-container *ngIf="opcion === 'trainers'">
-      <ion-card *ngFor="let trainer of trainers" [style.borderLeftColor]="trainer.color" class="clase-card">
-        <ion-card-header>
-          <ion-card-title>
-            <span class="clase-nombre">
-              <ion-icon [name]="trainer.icono" class="clase-icono"></ion-icon>
-              {{ trainer.nombre }}
-            </span>
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="clase-descripcion">Especialidad: {{ trainer.especialidad }}</div>
-          <div class="clase-info">
-            <span>
-              <ion-icon name="mail-outline"></ion-icon>
-              {{ trainer.contacto }}
-            </span>
+      <ion-accordion-group expand="single">
+        <ion-accordion *ngFor="let trainer of trainers" [value]="trainer.id" class="accordion-card" [style.--accent-color]="trainer.color">
+          <ion-item slot="header" color="light">
+            <ion-icon [name]="trainer.icono" slot="start" class="clase-icono"></ion-icon>
+            <ion-label>
+              <span class="clase-nombre">{{ trainer.nombre }}</span>
+            </ion-label>
+          </ion-item>
+          <div class="accordion-content" slot="content">
+            <div class="clase-descripcion">Especialidad: {{ trainer.especialidad }}</div>
+            <div class="clase-info">
+              <span>
+                <ion-icon name="mail-outline"></ion-icon>
+                {{ trainer.contacto }}
+              </span>
+            </div>
+            <ion-button expand="block" color="primary" (click)="contactarTrainer(trainer)">
+              <ion-icon name="chatbubble-ellipses-outline" slot="start"></ion-icon>
+              Contactar
+            </ion-button>
           </div>
-          <ion-button expand="block" color="primary" (click)="contactarTrainer(trainer)">
-            <ion-icon name="chatbubble-ellipses-outline" slot="start"></ion-icon>
-            Contactar
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
+        </ion-accordion>
+      </ion-accordion-group>
     </ng-container>
 
     <!-- Reservas de Espacios -->
     <ng-container *ngIf="opcion === 'espacios'">
-      <ion-card *ngFor="let espacio of espacios" [style.borderLeftColor]="espacio.color" class="clase-card">
-        <ion-card-header>
-          <ion-card-title>
-            <span class="clase-nombre">
-              <ion-icon [name]="espacio.icono" class="clase-icono"></ion-icon>
-              {{ espacio.nombre }}
-            </span>
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="clase-descripcion">{{ espacio.descripcion }}</div>
-          <div class="clase-info">
-            <span>
-              <ion-icon name="people-outline"></ion-icon>
-              <b>{{ espacio.capacidad }}</b> cupos
-            </span>
-            <span>
-              <ion-icon name="calendar-outline"></ion-icon>
-              {{ espacio.fecha_hora | date:'EEEE d/MM HH:mm' }}
-            </span>
+      <ion-accordion-group expand="single">
+        <ion-accordion *ngFor="let espacio of espacios" [value]="espacio.id" class="accordion-card" [style.--accent-color]="espacio.color">
+          <ion-item slot="header" color="light">
+            <ion-icon [name]="espacio.icono" slot="start" class="clase-icono"></ion-icon>
+            <ion-label>
+              <span class="clase-nombre">{{ espacio.nombre }}</span>
+            </ion-label>
+          </ion-item>
+          <div class="accordion-content" slot="content">
+            <div class="clase-descripcion">{{ espacio.descripcion }}</div>
+            <div class="clase-info">
+              <span>
+                <ion-icon name="people-outline"></ion-icon>
+                <b>{{ espacio.capacidad }}</b> cupos
+              </span>
+              <span>
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{ espacio.fecha_hora | date:'EEEE d/MM HH:mm' }}
+              </span>
+            </div>
+            <ion-button expand="block" color="tertiary" (click)="reservarEspacio(espacio)">
+              <ion-icon name="calendar-outline" slot="start"></ion-icon>
+              Reservar Espacio
+            </ion-button>
           </div>
-          <ion-button expand="block" color="tertiary" (click)="reservarEspacio(espacio)">
-            <ion-icon name="calendar-outline" slot="start"></ion-icon>
-            Reservar Espacio
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
+        </ion-accordion>
+      </ion-accordion-group>
     </ng-container>
   </div>
+  
 </ion-content>

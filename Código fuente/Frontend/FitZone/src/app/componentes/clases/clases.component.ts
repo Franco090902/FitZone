@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel,IonSelect,
+  IonSelectOption, IonAccordionGroup,IonAccordion,IonItem,} from '@ionic/angular/standalone';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +15,8 @@ registerLocaleData(localeEs);
   templateUrl: './clases.component.html',
   styleUrls: ['./clases.component.scss'],
   imports: [
-    CommonModule, FormsModule, DatePipe, IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel
+    CommonModule, FormsModule, DatePipe, IonContent, IonHeader, IonSelect,
+  IonSelectOption, IonAccordionGroup,IonAccordion,IonItem, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, 
   ]
 })
 export class ClasesComponent  implements OnInit {

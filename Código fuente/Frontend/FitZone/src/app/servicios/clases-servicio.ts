@@ -5,9 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class ClasesServicio {
   getClases() {
-    return [
+    const clases= [
       {
-        id: 1,
         nombre: 'Yoga Flow',
         descripcion: 'Relajación y estiramiento para todos los niveles.',
         capacidad: 20,
@@ -16,7 +15,6 @@ export class ClasesServicio {
         icono: 'accessibility-outline'
       },
       {
-        id: 2,
         nombre: 'Spinning Power',
         descripcion: 'Entrenamiento cardiovascular intenso con música.',
         capacidad: 15,
@@ -25,7 +23,6 @@ export class ClasesServicio {
         icono: 'bicycle-outline'
       },
       {
-        id: 3,
         nombre: 'Funcional HIIT',
         descripcion: 'Circuito de alta intensidad para quemar calorías.',
         capacidad: 18,
@@ -34,12 +31,12 @@ export class ClasesServicio {
         icono: 'flame-outline'
       }
     ];
+    return clases.map((clase, idx) => ({ id: idx + 1, ...clase }));
   }
 
   getTrainers() {
-    return [
+    const trainers= [
       {
-        id: 1,
         nombre: 'Sofía Martínez',
         especialidad: 'Yoga y Pilates',
         contacto: 'sofia.martinez@fitzone.com',
@@ -47,7 +44,6 @@ export class ClasesServicio {
         icono: 'woman-outline'
       },
       {
-        id: 2,
         nombre: 'Lucas Gómez',
         especialidad: 'Funcional y HIIT',
         contacto: 'lucas.gomez@fitzone.com',
@@ -55,7 +51,6 @@ export class ClasesServicio {
         icono: 'man-outline'
       },
       {
-        id: 3,
         nombre: 'Carla Ruiz',
         especialidad: 'Spinning y Cardio',
         contacto: 'carla.ruiz@fitzone.com',
@@ -63,12 +58,12 @@ export class ClasesServicio {
         icono: 'bicycle-outline'
       }
     ];
+    return trainers.map((trainer, idx) => ({ id: idx + 1, ...trainer}));
   }
 
   getEspacios() {
-    return [
+    const espacios= [
       {
-        id: 1,
         nombre: 'SUM Principal',
         descripcion: 'Salón de usos múltiples para clases y eventos.',
         capacidad: 40,
@@ -77,7 +72,6 @@ export class ClasesServicio {
         icono: 'home-outline'
       },
       {
-        id: 2,
         nombre: 'Cancha Indoor',
         descripcion: 'Cancha cubierta para fútbol y actividades grupales.',
         capacidad: 20,
@@ -86,7 +80,6 @@ export class ClasesServicio {
         icono: 'football-outline'
       },
       {
-        id: 3,
         nombre: 'Sala de Spinning',
         descripcion: 'Espacio equipado con bicicletas de última generación.',
         capacidad: 15,
@@ -95,5 +88,6 @@ export class ClasesServicio {
         icono: 'bicycle-outline'
       }
     ];
+    return espacios.map((espacio, idx) => ({ id: idx + 1, ...espacio}))
   }
 }

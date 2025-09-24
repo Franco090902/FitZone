@@ -6,8 +6,15 @@
 }
 
 .toolbarInicioClases{
-  display:grid; 
+ display: grid;
+ text-align: center;
  
+ justify-content: center;
+ font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings:
+  "wdth" 100;
 }
 
 .logo {
@@ -16,6 +23,7 @@
   border-radius: 20px;
   box-shadow: 0 2px 12px rgba(44, 62, 80, 0.12);
   margin-bottom: 8px;
+  align-items: center;
 }
 
 .bienvenida {
@@ -26,7 +34,17 @@
   font-weight: 500;
   margin-bottom: 8px;
 }
-
+.ion-segment-button ion-label{
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  word-break: break-word;
+  padding: 0 2px;
+  display: block;
+  max-width: 90px; 
+}
 .icono-bienvenida {
   font-size: 1.5rem;
   margin-right: 6px;
@@ -37,7 +55,18 @@
   background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
   min-height: 100vh;
 }
-
+.accordion-card {
+  --ion-item-background: #f3e5f5;
+  --ion-item-color: #212121;
+  border-left: 8px solid var(--accent-color, #7C4DFF);
+  border-radius: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 16px rgba(44, 62, 80, 0.08);
+  transition: box-shadow 0.2s;
+  &:hover {
+    box-shadow: 0 8px 24px rgba(44, 62, 80, 0.18);
+  }
+}
 .clase-card {
   margin-bottom: 24px;
   border-left: 8px solid #7C4DFF;
@@ -76,7 +105,9 @@
   margin-bottom: 12px;
   color: #1976D2;
 }
-
+.accordion-content {
+  padding: 16px 8px 8px 8px;
+}
 ion-button {
   font-size: 1rem;
   font-weight: 500;
