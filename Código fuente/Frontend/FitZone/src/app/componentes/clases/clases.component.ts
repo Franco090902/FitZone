@@ -35,12 +35,29 @@ export class ClasesComponent  implements OnInit {
   ngOnInit() {}
  reservarClase(clase: any) {
     // Aquí deberás implementar la lógica de reserva con backend en el futuro
-    alert(`Reservaste la clase: ${clase.nombre}`);
+   if (clase.capacidad > 0){
+    clase.capacidad = clase.capacidad -1;
+    alert (`Reservaste la clase: ${clase.nombre}. Cupos restantes: ${clase.capacidad}`);
+   } else{
+    alert('No quedan cupos disponibles para esta clase');
+   }
   }
+  
   contactarTrainer(trainer: any) {
-    alert(`Contactaste a: ${trainer.nombre}\nEmail: ${trainer.contacto}`);
+    if (trainer.capacidad > 0){
+    trainer.capacidad = trainer.capacidad -1;
+    alert (`Reservaste la clase: ${trainer.nombre}. Cupos restantes: ${trainer.capacidad}`);
+   } else{
+    alert('No quedan cupos disponibles para esta clase');
+   }
   }
+
     reservarEspacio(espacio: any) {
-    alert(`Reservaste el espacio: ${espacio.nombre}`);
+    if (espacio.capacidad > 0){
+    espacio.capacidad = espacio.capacidad -1;
+    alert (`Reservaste la clase: ${espacio.nombre}. Cupos restantes: ${espacio.capacidad}`);
+   } else{
+    alert('No quedan cupos disponibles para esta clase');
+   }
   }
 }
