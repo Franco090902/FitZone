@@ -48,11 +48,12 @@ export class ClasesComponent  implements OnInit {
   }
 
     reservarEspacio(espacio: any) {
-    if (espacio.capacidad > 0){
-    espacio.capacidad = espacio.capacidad -1;
-    alert (`Reservaste la clase: ${espacio.nombre}. Cupos restantes: ${espacio.capacidad}`);
-   } else{
-    alert('No quedan cupos disponibles para esta clase');
-   }
+    console.log('Valor de fecha_hora:', espacio.fecha_hora);
+     if (!espacio.fecha_hora) {
+    alert('Selecciona una fecha y hora para la reserva.');
+    return;
+  }
+   const fecha = typeof espacio.fecha_hora === 'string' ? espacio.fecha_hora : espacio.fecha_hora?.value;
+  alert(`Reservaste el espacio: ${espacio.nombre} para el ${espacio.fecha_hora}`);
   }
 }

@@ -98,16 +98,20 @@
           </ion-item>
           <div class="accordion-content" slot="content">
             <div class="clase-descripcion">{{ espacio.descripcion }}</div>
-            <div class="clase-info">
-              <span>
-                <ion-icon name="people-outline"></ion-icon>
-                <b>{{ espacio.capacidad }}</b> cupos
-              </span>
-              <span>
-                <ion-icon name="calendar-outline"></ion-icon>
-                {{ espacio.fecha_hora | date:'EEEE d/MM HH:mm' }}
-              </span>
-            </div>
+            <div class="clase-info capacidad-arriba">
+          <span>
+            <ion-icon name="people-outline"></ion-icon>
+            <b>{{ espacio.capacidad }}</b> personas
+          </span>
+        </div>
+        <div class="selector-fecha">
+          <ion-label>Fecha y Hora</ion-label>
+         <ion-datetime
+  [(ngModel)]="espacio.fecha_hora"
+  presentation="date-time"
+  name="fecha_hora_{{espacio.id}}">
+</ion-datetime>
+        </div>
             <ion-button expand="block" color="tertiary" (click)="reservarEspacio(espacio)">
               <ion-icon name="calendar-outline" slot="start"></ion-icon>
               Reservar Espacio

@@ -67,7 +67,7 @@ export class ClasesServicio {
         nombre: 'SUM Principal',
         descripcion: 'Salón de usos múltiples para clases y eventos.',
         capacidad: 40,
-        fecha_hora: '2025-09-07T17:00',
+        fecha_hora: null,
         color: '#7C4DFF',
         icono: 'home-outline'
       },
@@ -75,7 +75,7 @@ export class ClasesServicio {
         nombre: 'Cancha Indoor',
         descripcion: 'Cancha cubierta para fútbol y actividades grupales.',
         capacidad: 20,
-        fecha_hora: '2025-09-08T19:00',
+        fecha_hora: null,
         color: '#00B8D4',
         icono: 'football-outline'
       },
@@ -83,7 +83,7 @@ export class ClasesServicio {
         nombre: 'Sala de Spinning',
         descripcion: 'Espacio equipado con bicicletas de última generación.',
         capacidad: 15,
-        fecha_hora: '2025-09-09T08:00',
+        fecha_hora: null,
         color: '#212121',
         icono: 'bicycle-outline'
       }

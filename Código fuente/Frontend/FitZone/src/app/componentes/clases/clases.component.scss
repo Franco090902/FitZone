@@ -29,7 +29,29 @@ ion-content{
   margin-bottom: 8px;
   align-items: center;
 }
+.capacidad-arriba {
+  margin-bottom: 12px;
+  font-size: 1rem;
+  color: #1976D2;
+  display: flex;
+  align-items: center;
+}
 
+.selector-fecha {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  ion-label {
+    margin-bottom: 4px;
+    font-weight: 500;
+    color: #7C4DFF;
+  }
+  ion-datetime {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+}
 .bienvenida {
   display: flex;
   align-items: center;
@@ -38,16 +60,12 @@ ion-content{
   font-weight: 500;
   margin-bottom: 8px;
 }
-.ion-segment-button ion-label{
-  white-space: normal;
-  overflow-wrap: break-word;
+ion-segment-button ion-label{
+ display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  font-size: 0.95rem;
-  line-height: 1.2;
-  word-break: break-word;
-  padding: 0 2px;
-  display: block;
-  max-width: 90px; 
+  white-space: normal !important;
 }
 .icono-bienvenida {
   font-size: 1.5rem;
