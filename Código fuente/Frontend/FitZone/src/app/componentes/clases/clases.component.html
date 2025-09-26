@@ -108,9 +108,20 @@
           <ion-label>Fecha y Hora</ion-label>
          <ion-datetime
   [(ngModel)]="espacio.fecha_hora"
+  (ionChange)="onFechaHoraChange($event, espacio)"
   presentation="date-time"
   name="fecha_hora_{{espacio.id}}">
 </ion-datetime>
+<div *ngIf="getHorariosTomados(espacio.id).length > 0" class="horarios-tomados">
+  <ion-label color="danger">
+    Horarios ya reservados:
+    <ul>
+      <li *ngFor="let h of getHorariosTomados(espacio.id)">
+        {{ h | date:'EEEE d/MM HH:mm' }}
+      </li>
+    </ul>
+  </ion-label>
+</div>
         </div>
             <ion-button expand="block" color="tertiary" (click)="reservarEspacio(espacio)">
               <ion-icon name="calendar-outline" slot="start"></ion-icon>

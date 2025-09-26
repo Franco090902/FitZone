@@ -7,6 +7,7 @@ import localeEs from '@angular/common/locales/es';
 import { FormsModule } from '@angular/forms';
 import { ClasesServicio } from 'src/app/servicios/clases-servicio';
 registerLocaleData(localeEs);
+import { ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
@@ -24,9 +25,9 @@ export class ClasesComponent  implements OnInit {
  clases:any[]=[];
  trainers: any[] = [];
  espacios: any[] = [];
+reservasEspacios: { espacioId: number, fecha_hora: string }[] = [];
 
-
-  constructor(private clasesServicio: ClasesServicio) { 
+  constructor(private clasesServicio: ClasesServicio, private cdr: ChangeDetectorRef) { 
     this.clases= this.clasesServicio.getClases();
     this.trainers= this.clasesServicio.getTrainers();
     this.espacios= this.clasesServicio.getEspacios();
@@ -46,14 +47,32 @@ export class ClasesComponent  implements OnInit {
   contactarTrainer(trainer: any) {
     alert(`Reservaste la clase:  ${trainer.nombre}`) ;
   }
-
-    reservarEspacio(espacio: any) {
+onFechaHoraChange(event: any, espacio: any) {
+  espacio.fecha_hora = event.detail.value;
+}
+  reservarEspacio(espacio: any) {
     console.log('Valor de fecha_hora:', espacio.fecha_hora);
      if (!espacio.fecha_hora) {
     alert('Selecciona una fecha y hora para la reserva.');
     return;
   }
-   const fecha = typeof espacio.fecha_hora === 'string' ? espacio.fecha_hora : espacio.fecha_hora?.value;
-  alert(`Reservaste el espacio: ${espacio.nombre} para el ${espacio.fecha_hora}`);
+  
+  const horariosTomados = this.getHorariosTomados(espacio.id);
+  if (horariosTomados.includes(espacio.fecha_hora)) {
+    alert('Ese horario ya está reservado. Elige otro.');
+    return;
   }
+  this.reservasEspacios.push({ espacioId: espacio.id, fecha_hora: espacio.fecha_hora });
+  alert(`Reservaste el espacio: ${espacio.nombre} para el ${espacio.fecha_hora}`);
+  this.cdr.detectChanges();
+   this.espacios = [...this.espacios];
+}
+getHorariosTomados(espacioId: number): string[] {
+  return this.reservasEspacios
+    .filter(r => r.espacioId === espacioId)
+    .map(r => r.fecha_hora);
+}
+
+
+  
 }
