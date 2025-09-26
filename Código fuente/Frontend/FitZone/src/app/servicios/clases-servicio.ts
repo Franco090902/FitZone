@@ -12,7 +12,8 @@ export class ClasesServicio {
         capacidad: 20,
         fecha_hora: '2025-09-05T10:00',
         color: '#7C4DFF',
-        icono: 'accessibility-outline'
+        icono: 'accessibility-outline',
+        imagen:'assets/imagen Yoga Flow.jpg'
       },
       {
         nombre: 'Spinning Power',
@@ -20,7 +21,8 @@ export class ClasesServicio {
         capacidad: 15,
         fecha_hora: '2025-09-05T18:00',
         color: '#00B8D4',
-        icono: 'bicycle-outline'
+        icono: 'bicycle-outline',
+        imagen: 'assets/imagen Spinning.jpg'
       },
       {
         nombre: 'Funcional HIIT',
@@ -28,7 +30,8 @@ export class ClasesServicio {
         capacidad: 18,
         fecha_hora: '2025-09-06T09:00',
         color: '#212121',
-        icono: 'flame-outline'
+        icono: 'flame-outline',
+      imagen: 'assets/imagen Funtional Hiit.jpg'
       }
     ];
     return clases.map((clase, idx) => ({ id: idx + 1, ...clase }));
@@ -41,21 +44,24 @@ export class ClasesServicio {
         especialidad: 'Yoga y Pilates',
         contacto: 'sofia.martinez@fitzone.com',
         color: '#7C4DFF',
-        icono: 'woman-outline'
+        icono: 'woman-outline',
+        imagen: 'assets/personal Trainer Sofia Martinez.jpg'
       },
       {
         nombre: 'Lucas Gómez',
         especialidad: 'Funcional y HIIT',
         contacto: 'lucas.gomez@fitzone.com',
         color: '#00B8D4',
-        icono: 'man-outline'
+        icono: 'man-outline',
+         imagen: 'assets/personal Trainer Lucas Gomez.png'
       },
       {
         nombre: 'Carla Ruiz',
         especialidad: 'Spinning y Cardio',
         contacto: 'carla.ruiz@fitzone.com',
         color: '#212121',
-        icono: 'bicycle-outline'
+        icono: 'bicycle-outline',
+        imagen: 'assets/personal Trainer Carla.jpg'
       }
     ];
     return trainers.map((trainer, idx) => ({ id: idx + 1, ...trainer}));
@@ -69,7 +75,8 @@ export class ClasesServicio {
         capacidad: 40,
         fecha_hora: null,
         color: '#7C4DFF',
-        icono: 'home-outline'
+        icono: 'home-outline',
+        imagen: 'assets/imagen SUM.jpg'
       },
       {
         nombre: 'Cancha Indoor',
@@ -77,7 +84,8 @@ export class ClasesServicio {
         capacidad: 20,
         fecha_hora: null,
         color: '#00B8D4',
-        icono: 'football-outline'
+        icono: 'football-outline',
+        imagen: 'assets/imagen Cancha Indoor.jpeg'
       },
       {
         nombre: 'Sala de Spinning',
@@ -85,7 +93,8 @@ export class ClasesServicio {
         capacidad: 15,
         fecha_hora: null,
         color: '#212121',
-        icono: 'bicycle-outline'
+        icono: 'bicycle-outline',
+        imagen: 'assets/imagen Sala de Spinning.jpg'
       }
     ];
     return espacios.map((espacio, idx) => ({ id: idx + 1, ...espacio}))

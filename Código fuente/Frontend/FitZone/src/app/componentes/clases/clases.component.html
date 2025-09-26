@@ -10,7 +10,6 @@
 
 <ion-content [fullscreen]="true">
   <div class="clases-top">
-    <img src="assets/Logo Fitzone Transparente.png" alt="FitZone Logo" class="logo" />
     <div class="bienvenida">
       <ion-icon name="sparkles-outline" class="icono-bienvenida"></ion-icon>
       <span>¡Elegí tu próxima actividad!</span>
@@ -54,6 +53,7 @@
               <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
               Reservar
             </ion-button>
+            <img [src]="clase.imagen" alt="{{ clase.nombre }}" class="img-accordion" />
           </div>
         </ion-accordion>
       </ion-accordion-group>
@@ -81,6 +81,7 @@
               <ion-icon name="chatbubble-ellipses-outline" slot="start"></ion-icon>
               Contactar
             </ion-button>
+            <img [src]="trainer.imagen" alt="{{ trainer.nombre }}" class="img-accordion" />
           </div>
         </ion-accordion>
       </ion-accordion-group>
@@ -88,7 +89,7 @@
 
     <!-- Reservas de Espacios -->
     <ng-container *ngIf="opcion === 'espacios'">
-      <ion-accordion-group expand="single">
+      <ion-accordion-group>
         <ion-accordion *ngFor="let espacio of espacios" [value]="espacio.id" class="accordion-card" [style.--accent-color]="espacio.color">
           <ion-item slot="header" color="light">
             <ion-icon [name]="espacio.icono" slot="start" class="clase-icono"></ion-icon>
@@ -127,6 +128,7 @@
               <ion-icon name="calendar-outline" slot="start"></ion-icon>
               Reservar Espacio
             </ion-button>
+            <img [src]="espacio.imagen" alt="{{ espacio.nombre }}" class="img-accordion" />
           </div>
         </ion-accordion>
       </ion-accordion-group>
