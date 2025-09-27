@@ -27,11 +27,14 @@ export class ClasesComponent  implements OnInit {
  trainers: any[] = [];
  espacios: any[] = [];
 reservasEspacios: { espacioId: number, fecha_hora: string }[] = [];
-
+fechaHoraSeleccionada: { [espacioId: number]: string | null } = {};
   constructor(private clasesServicio: ClasesServicio, private toastController: ToastController,private cdr: ChangeDetectorRef) { 
     this.clases= this.clasesServicio.getClases();
     this.trainers= this.clasesServicio.getTrainers();
     this.espacios= this.clasesServicio.getEspacios();
+    this.espacios.forEach(espacio => {
+    this.fechaHoraSeleccionada[espacio.id] = null;
+});
   }
 
 
@@ -68,21 +71,29 @@ reservasEspacios: { espacioId: number, fecha_hora: string }[] = [];
   contactarTrainer(trainer: any) {
     this.presentToast(`✅ Reservaste la clase:  ${trainer.nombre}`);
   }
-onFechaHoraChange(event: any, espacio: any) {
-  if (event.detail && event.detail.value) {
-      espacio.fecha_hora = event.detail.value;
-    }
-}
+onFechaHoraChange(event: any, espacioId: number) {
+    if (event.detail && event.detail.value) {
+      this.fechaHoraSeleccionada[espacioId] = event.detail.value;
+    } else {
+      this.fechaHoraSeleccionada[espacioId] = null;
+    }
+  } 
+
+trackByEspacioId(index: number, espacio: any): number {
+    return espacio.id;
+  }
+
   reservarEspacio(espacio: any) {
-    console.log('Valor de fecha_hora:', espacio.fecha_hora);
+     const fecha_hora_seleccionada = this.fechaHoraSeleccionada[espacio.id];
+    console.log('Valor de fecha_hora:', fecha_hora_seleccionada);
     
-    if (!espacio.fecha_hora) {
-      this.presentToast('⚠️ Selecciona una fecha y hora para la reserva.', 'warning');
-      return;
-    }
+    if (!fecha_hora_seleccionada) {
+      this.presentToast('⚠️ Selecciona una fecha y hora para la reserva.', 'warning');
+      return;
+    }
     
     const horariosTomados = this.getHorariosTomados(espacio.id);
-    const fechaSeleccionada = new Date(espacio.fecha_hora).toISOString();
+    const fechaSeleccionada = new Date(fecha_hora_seleccionada).toISOString();
     
     if (horariosTomados.some(h => new Date(h).toISOString() === fechaSeleccionada)) {
          this.presentToast('⚠️ Ese horario ya está reservado. Elige otro.', 'danger');
@@ -96,11 +107,11 @@ onFechaHoraChange(event: any, espacio: any) {
     
     this.presentToast(
       `✅ Reservaste el espacio: ${espacio.nombre} para el ${new Date(
-        espacio.fecha_hora
+        fecha_hora_seleccionada
       ).toLocaleString('es-ES')}`,
       'success'
     );
-    espacio.fecha_hora = null;
+    this.fechaHoraSeleccionada[espacio.id] = null;
     this.cdr.detectChanges();
   }
 

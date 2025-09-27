@@ -90,7 +90,7 @@
     <!-- Reservas de Espacios -->
     <ng-container *ngIf="opcion === 'espacios'">
       <ion-accordion-group>
-        <ion-accordion *ngFor="let espacio of espacios" [value]="espacio.id" class="accordion-card" [style.--accent-color]="espacio.color">
+        <ion-accordion *ngFor="let espacio of espacios; trackBy: trackByEspacioId" [value]="espacio.id" class="accordion-card" [style.--accent-color]="espacio.color">
           <ion-item slot="header" color="light">
             <ion-icon [name]="espacio.icono" slot="start" class="clase-icono"></ion-icon>
             <ion-label>
@@ -108,10 +108,10 @@
         <div class="selector-fecha">
           <ion-label>Fecha y Hora</ion-label>
          <ion-datetime
-  [(ngModel)]="espacio.fecha_hora"
-  (ionChange)="onFechaHoraChange($event, espacio)"
-  presentation="date-time"
-  name="fecha_hora_{{espacio.id}}">
+  [(ngModel)]="fechaHoraSeleccionada[espacio.id]"
+(ionChange)="onFechaHoraChange($event, espacio.id)"
+presentation="date-time"
+name="fecha_hora_{{espacio.id}}">
 </ion-datetime>
 <div *ngIf="getHorariosTomados(espacio.id).length > 0" class="horarios-tomados">
   <ion-label color="danger">
