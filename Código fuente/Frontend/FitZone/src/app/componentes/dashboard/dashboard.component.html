@@ -1,3 +1,40 @@
-<p>
-  dashboard works!
-</p>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title class="titulo">FitZone</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Membresía -->
+  <ion-card button [routerLink]="['/membresia']" class="card-opcion">
+    <ion-card-header>
+      <ion-card-title>Membresía</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Información sobre tu plan y estado de pago
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Entrenamientos -->
+  <ion-card button [routerLink]="['/entrenamientos']" class="card-opcion">
+    <ion-card-header>
+      <ion-card-title>Entrenamientos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Accedé a tus rutinas personalizadas
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Clases -->
+  <ion-card button [routerLink]="['/clases']" class="card-opcion">
+    <ion-card-header>
+      <ion-card-title>Clases</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Revisá horarios y reservas disponibles
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
+
