@@ -1,0 +1,33 @@
+.titulo {
+  font-weight: bold;
+  font-size: 22px;
+  text-align: center;
+}
+
+ion-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-opcion {
+  border-radius: 16px;
+  margin: 16px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card-opcion:hover {
+  transform: scale(1.02);
+}
+
+ion-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+}
+
+ion-card-content {
+  font-size: 14px;
+  color: #555;
+}
