@@ -1,3 +1,78 @@
-.ion-padding {
-  text-align: center;
+:host {
+  display: block;
+  padding: 16px;
+}
+
+.membresia-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.membresia-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.membresia-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.membresia-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.membresia-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 16px;
+  color: #1976d2;
+}
+
+.membresia-details {
+  flex: 1;
+}
+
+.membresia-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #222;
+}
+
+.membresia-description {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.membresia-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #1565c0;
+};
 }

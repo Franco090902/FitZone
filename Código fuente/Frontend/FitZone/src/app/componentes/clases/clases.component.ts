@@ -29,12 +29,7 @@ export class ClasesComponent  implements OnInit {
 reservasEspacios: { espacioId: number, fecha_hora: string }[] = [];
 fechaHoraSeleccionada: { [espacioId: number]: string | null } = {};
   constructor(private clasesServicio: ClasesServicio, private toastController: ToastController,private cdr: ChangeDetectorRef) { 
-    this.clases= this.clasesServicio.getClases();
-    this.trainers= this.clasesServicio.getTrainers();
-    this.espacios= this.clasesServicio.getEspacios();
-    this.espacios.forEach(espacio => {
-    this.fechaHoraSeleccionada[espacio.id] = null;
-});
+    
   }
 
 
@@ -54,7 +49,15 @@ fechaHoraSeleccionada: { [espacioId: number]: string | null } = {};
     });
     await toast.present();
   }
-  ngOnInit() {}
+  ngOnInit() {
+
+    this.clases= this.clasesServicio.getClases();
+    this.trainers= this.clasesServicio.getTrainers();
+    this.espacios= this.clasesServicio.getEspacios();
+    this.espacios.forEach(espacio => {
+    this.fechaHoraSeleccionada[espacio.id] = null;
+});
+  }
  reservarClase(clase: any) {
     // Aquí deberás implementar la lógica de reserva con backend en el futuro
    if (clase.capacidad > 0){
