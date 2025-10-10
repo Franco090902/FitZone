@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
-    RouterModule
+    RouterLink
   ]
 })
 export class DashboardComponent  implements OnInit {

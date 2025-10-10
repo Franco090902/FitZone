@@ -1,24 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButton, IonInput } from '@ionic/angular/standalone';
+import { IonContent,IonSelect,IonSelectOption, IonHeader, IonToolbar, IonTitle, IonButton, IonInput } from '@ionic/angular/standalone';
+import { AuthApi } from 'src/app/servicios/auth-api';
+import { HttpClientModule } from '@angular/common/http';
 @Component({
   selector: 'app-register',
   standalone: true,
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonButton, IonInput, FormsModule]
+  imports: [IonContent,IonSelect,IonSelectOption, IonHeader, IonToolbar, IonTitle, IonButton,IonInput, FormsModule]
 })
 export class RegisterComponent  implements OnInit {
 email = '';
   password = '';
-  constructor(private router: Router) {}
+  tipoUsuario = 'cliente';
+  constructor(private router: Router, private authApi: AuthApi) {}
 
   register() {
-    // Simulación de registro exitoso
     if (this.email && this.password) {
-      localStorage.setItem('auth', 'true');
-      this.router.navigateByUrl('/');
+      this.authApi.register({
+        username: this.email, // O puedes pedir username aparte
+        password: this.password,
+        tipo_usuario: this.tipoUsuario,
+        email: this.email
+      }).subscribe({
+        next: () => {
+          // Guardar auth en localStorage para el guard
+          localStorage.setItem('auth', 'true');
+          localStorage.setItem('tipoUsuario', this.tipoUsuario);
+          this.router.navigateByUrl('/');
+        },
+        error: err => {
+          alert(err.error?.error || 'Error al registrar');
+        }
+      });
     } else {
       alert('Completa todos los campos');
     }

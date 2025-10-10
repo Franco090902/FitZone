@@ -10,7 +10,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { library, playCircle, radio, search, cardOutline, } from 'ionicons/icons';
 @Component({
@@ -21,7 +21,7 @@ import { library, playCircle, radio, search, cardOutline, } from 'ionicons/icons
   imports: [
     IonContent, IonHeader, IonIcon, IonTab, IonTabBar, IonTabButton,
     IonTabs, IonTitle, IonToolbar,
-    RouterModule
+    RouterLink
   ],
 })
 export class TabsComponent  implements OnInit {

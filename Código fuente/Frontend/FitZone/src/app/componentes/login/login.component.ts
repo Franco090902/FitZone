@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonSelect,  IonSelectOption, IonHeader, IonToolbar, IonTitle, IonButton, IonInput } from '@ionic/angular/standalone';
+import { AuthApi } from 'src/app/servicios/auth-api';
+import { HttpClientModule } from '@angular/common/http';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -13,21 +15,30 @@ export class LoginComponent  implements OnInit {
 email = '';
   password = '';
   tipoUsuario='';
-  constructor(private router: Router) {}
+  constructor(private router: Router ,  private authApi: AuthApi) {}
 
   login() {
     if (!this.email || !this.password || !this.tipoUsuario) {
       alert("Completa todos los campos");
       return;
     }
-    localStorage.setItem('auth', 'true');
-    localStorage.setItem('tipoUsuario', this.tipoUsuario);
-    if (this.tipoUsuario === 'gimnasio') {
-      this.router.navigateByUrl('/gimnasio');
-    } else {
-      this.router.navigateByUrl('/');
-    }
-
+   this.authApi.login({
+      username: this.email, // O username si lo pides aparte
+      password: this.password
+    }).subscribe({
+      next: (res) => {
+        localStorage.setItem('auth', 'true');
+        localStorage.setItem('tipoUsuario', res.tipo_usuario);
+        if (res.tipo_usuario === 'gimnasio') {
+          this.router.navigateByUrl('/gimnasio');
+        } else {
+          this.router.navigateByUrl('/');
+        }
+      },
+      error: err => {
+        alert(err.error?.error || 'Usuario o contraseña incorrectos');
+      }
+    });
   }
 
   goToRegister() {
