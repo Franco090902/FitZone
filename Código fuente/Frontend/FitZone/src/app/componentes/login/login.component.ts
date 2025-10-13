@@ -29,6 +29,7 @@ email = '';
       next: (res) => {
         localStorage.setItem('auth', 'true');
         localStorage.setItem('tipoUsuario', res.tipo_usuario);
+        localStorage.setItem('id_usuario', String(res.id_usuario));
         if (res.tipo_usuario === 'gimnasio') {
           this.router.navigateByUrl('/gimnasio');
         } else {

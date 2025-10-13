@@ -56,15 +56,33 @@ app.post('/api/register', async (req, res) => {
       'INSERT INTO usuario (username, password, tipo_usuario) VALUES ($1, $2, $3) RETURNING id_usuario, username, tipo_usuario',
       [username, hash, tipo_usuario]
     );
+    const nuevoUsuario = result.rows[0];
 
+    // Si es cliente, lo creo en "cliente" y le asigno un gimnasio por defecto (si existe alguno)
     if (tipo_usuario === 'cliente' && email) {
-      await pool.query(
-        'INSERT INTO cliente (nombre, apellido, email, id_usuario) VALUES ($1, $2, $3, $4)',
-        [username, '', email, result.rows[0].id_usuario]
-      );
+      const g = await pool.query('SELECT id_gimnasio FROM gimnasio ORDER BY id_gimnasio ASC LIMIT 1');
+      const idGimnasio = g.rows[0]?.id_gimnasio ?? null;
+
+      if (idGimnasio) {
+        await pool.query(
+          'INSERT INTO cliente (nombre, apellido, email, id_usuario, id_gimnasio) VALUES ($1, $2, $3, $4, $5)',
+          [username, '', email, nuevoUsuario.id_usuario, idGimnasio]
+        );
+      } else {
+        // Si aún no hay gimnasios, lo creo sin id_gimnasio
+        await pool.query(
+          'INSERT INTO cliente (nombre, apellido, email, id_usuario) VALUES ($1, $2, $3, $4)',
+          [username, '', email, nuevoUsuario.id_usuario]
+        );
+      }
     }
 
-    res.status(201).json({ message: 'Usuario registrado' });
+    // Respuesta única con el id generado
+    return res.status(201).json({
+      id_usuario: nuevoUsuario.id_usuario,
+      username: nuevoUsuario.username,
+      tipo_usuario: nuevoUsuario.tipo_usuario
+    });
   } catch (err) {
     console.error('REGISTER ERROR:', err.message);
     res.status(500).json({ error: err.message });
@@ -90,34 +108,93 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-// Obtener todas las clases
+// Clases con cupos disponibles
 app.get('/api/clases', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM clase');
-    res.json(result.rows);
+    const idGimnasio = req.query.gimnasio ? Number(req.query.gimnasio) : undefined;
+
+    let sql = `
+      SELECT
+        c.id_clase,
+        c.nombre,
+        c.descripcion,
+        c.capacidad,
+        c.fecha_hora,
+        c.id_gimnasio,
+        (c.capacidad - COALESCE(COUNT(r.id_reserva), 0)) AS cupos_disponibles
+      FROM clase c
+      LEFT JOIN reserva r ON r.id_clase = c.id_clase
+    `;
+    const params = [];
+
+    if (idGimnasio) {
+      sql += ` WHERE c.id_gimnasio = $1 `;
+      params.push(idGimnasio);
+    }
+
+    sql += ` GROUP BY c.id_clase ORDER BY c.fecha_hora ASC`;
+
+    const r = await pool.query(sql, params);
+    res.json(r.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Obtener una clase por ID
-app.get('/api/clases/:id', async (req, res) => {
+// Trainers del gimnasio
+app.get('/api/trainers', async (_req, res) => {
   try {
-    const { id } = req.params;
-    const result = await pool.query('SELECT * FROM clase WHERE id_clase = $1', [id]);
-    res.json(result.rows[0]);
+    const r = await pool.query(`
+      SELECT id_trainer, nombre, especialidad, contacto, id_gimnasio
+      FROM trainer
+      ORDER BY nombre ASC
+    `);
+    res.json(r.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Crear una reserva de clase
+// Mapea usuario logueado -> cliente
+app.get('/api/clientes/by-usuario/:idUsuario', async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT id_cliente, nombre, apellido, email, id_gimnasio
+       FROM cliente
+       WHERE id_usuario = $1`,
+      [req.params.idUsuario]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Cliente no encontrado' });
+    res.json(r.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Crear reserva con control de cupos
 app.post('/api/reservas', async (req, res) => {
   try {
     const { id_clase, fecha_reserva, descripcion, id_cliente } = req.body;
+    if (!id_clase || !fecha_reserva || !id_cliente) {
+      return res.status(400).json({ error: 'Faltan datos' });
+    }
+
+    const cupos = await pool.query(
+      `SELECT c.capacidad - COALESCE(COUNT(r.id_reserva), 0) AS cupos_disponibles
+       FROM clase c
+       LEFT JOIN reserva r ON r.id_clase = c.id_clase
+       WHERE c.id_clase = $1
+       GROUP BY c.capacidad`,
+      [id_clase]
+    );
+    const disponibles = Number(cupos.rows?.[0]?.cupos_disponibles ?? 0);
+    if (disponibles <= 0) return res.status(409).json({ error: 'No hay cupos disponibles' });
+
     const result = await pool.query(
-      'INSERT INTO reserva (id_clase, fecha_reserva, descripcion, id_cliente) VALUES ($1, $2, $3, $4) RETURNING *',
-      [id_clase, fecha_reserva, descripcion, id_cliente]
+      `INSERT INTO reserva (id_clase, fecha_reserva, descripcion, id_cliente)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [id_clase, fecha_reserva, descripcion ?? null, id_cliente]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -125,40 +202,114 @@ app.post('/api/reservas', async (req, res) => {
   }
 });
 
-// Obtener reservas de una clase
-app.get('/api/clases/:id/reservas', async (req, res) => {
+// Todas las reservas (con datos de clase)
+app.get('/api/reservas', async (_req, res) => {
   try {
-    const { id } = req.params;
-    const result = await pool.query('SELECT * FROM reserva WHERE id_clase = $1', [id]);
-    res.json(result.rows);
+    const r = await pool.query(`
+      SELECT
+        r.id_reserva, r.id_clase, r.fecha_reserva, r.descripcion, r.id_cliente,
+        c.nombre AS clase_nombre, c.fecha_hora AS clase_fecha_hora
+      FROM reserva r
+      JOIN clase c ON c.id_clase = r.id_clase
+      ORDER BY r.fecha_reserva DESC
+    `);
+    res.json(r.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Obtener todas las reservas
-app.get('/api/reservas', async (req, res) => {
+// Reservas por cliente
+app.get('/api/clientes/:idCliente/reservas', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM reserva');
-    res.json(result.rows);
+    const r = await pool.query(`
+      SELECT
+        r.id_reserva, r.id_clase, r.fecha_reserva, r.descripcion, r.id_cliente,
+        c.nombre AS clase_nombre, c.fecha_hora AS clase_fecha_hora
+      FROM reserva r
+      JOIN clase c ON c.id_clase = r.id_clase
+      WHERE r.id_cliente = $1
+      ORDER BY r.fecha_reserva DESC
+    `, [req.params.idCliente]);
+    res.json(r.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// (Opcional) Eliminar una reserva
 app.delete('/api/reservas/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    await pool.query('DELETE FROM reserva WHERE id_reserva = $1', [id]);
-    res.status(204).send();
+    const r = await pool.query('DELETE FROM reserva WHERE id_reserva = $1', [req.params.id]);
+    if (r.rowCount === 0) return res.sendStatus(404);
+    return res.sendStatus(204);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 
+app.get('/api/espacios', async (req, res) => {
+  try {
+    const idGimnasio = req.query.gimnasio ? Number(req.query.gimnasio) : undefined;
+    const sql = idGimnasio
+      ? 'SELECT id_espacio, nombre, capacidad, descripcion, id_gimnasio FROM espacio WHERE id_gimnasio = $1 ORDER BY nombre'
+      : 'SELECT id_espacio, nombre, capacidad, descripcion, id_gimnasio FROM espacio ORDER BY nombre';
+    const r = await pool.query(sql, idGimnasio ? [idGimnasio] : []);
+    res.json(r.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+// Crear reserva de espacio (valida doble turno por UNIQUE)
+app.post('/api/espacios/reservas', async (req, res) => {
+  try {
+    const { id_espacio, id_cliente, fecha_reserva, descripcion } = req.body;
+    if (!id_espacio || !id_cliente || !fecha_reserva) {
+      return res.status(400).json({ error: 'Faltan datos' });
+    }
+    const r = await pool.query(
+      `INSERT INTO reserva_espacio (id_espacio, id_cliente, fecha_reserva, descripcion)
+       VALUES ($1, $2, $3, $4) RETURNING *`,
+      [id_espacio, id_cliente, fecha_reserva, descripcion ?? null]
+    );
+    res.status(201).json(r.rows[0]);
+  } catch (err) {
+    if (String(err.message).includes('uq_reserva_espacio')) {
+      return res.status(409).json({ error: 'Ese espacio ya está reservado en ese horario' });
+    }
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Reservas de espacios por cliente
+app.get('/api/clientes/:idCliente/espacios/reservas', async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT re.id_reserva_espacio, re.id_espacio, re.fecha_reserva, re.descripcion,
+              e.nombre AS espacio_nombre, e.id_gimnasio
+       FROM reserva_espacio re
+       JOIN espacio e ON e.id_espacio = re.id_espacio
+       WHERE re.id_cliente = $1
+       ORDER BY re.fecha_reserva DESC`,
+      [req.params.idCliente]
+    );
+    res.json(r.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Eliminar reserva de espacio
+app.delete('/api/espacios/reservas/:id', async (req, res) => {
+  try {
+    const r = await pool.query('DELETE FROM reserva_espacio WHERE id_reserva_espacio = $1', [req.params.id]);
+    if (r.rowCount === 0) return res.sendStatus(404);
+    return res.sendStatus(204);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

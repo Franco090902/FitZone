@@ -9,7 +9,9 @@ import { ClasesServicio } from 'src/app/servicios/clases-servicio';
 registerLocaleData(localeEs);
 import { ChangeDetectorRef } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-
+import { IonicModule } from '@ionic/angular';
+import { TrainersApiService } from 'src/app/servicios/trainers-api-service';
+import { ReservasApiService } from 'src/app/servicios/reservas-api-service';
 
 @Component({
   selector: 'app-clases',
@@ -17,8 +19,7 @@ import { ToastController } from '@ionic/angular';
   templateUrl: './clases.component.html',
   styleUrls: ['./clases.component.scss'],
   imports: [
-    CommonModule, FormsModule, DatePipe, IonContent, IonHeader, IonSelect,
-  IonSelectOption, IonAccordionGroup,IonAccordion,IonItem, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, 
+    CommonModule, FormsModule, DatePipe, IonicModule 
   ]
 })
 export class ClasesComponent  implements OnInit {

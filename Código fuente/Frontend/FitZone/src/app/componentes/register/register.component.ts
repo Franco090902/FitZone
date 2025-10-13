@@ -14,7 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 export class RegisterComponent  implements OnInit {
 email = '';
   password = '';
-  tipoUsuario = 'cliente';
+  tipoUsuario = '';
   constructor(private router: Router, private authApi: AuthApi) {}
 
   register() {
@@ -29,6 +29,7 @@ email = '';
           // Guardar auth en localStorage para el guard
           localStorage.setItem('auth', 'true');
           localStorage.setItem('tipoUsuario', this.tipoUsuario);
+          if (res?.id_usuario) localStorage.setItem('id_usuario', String(res.id_usuario)); // <-- guardar
           this.router.navigateByUrl('/');
         },
         error: err => {
