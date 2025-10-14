@@ -30,7 +30,7 @@
     <!-- Clases Grupales -->
     <ng-container *ngIf="opcion === 'grupales'">
       <ion-accordion-group expand="single">
-        <ion-accordion *ngFor="let clase of clases" [value]="clase.id" class="accordion-card" [style.--accent-color]="clase.color">
+        <ion-accordion *ngFor="let clase of clases" [value]="clase.id_clase" class="accordion-card" [style.--accent-color]="clase.color">
           <ion-item slot="header" color="light">
             <ion-icon [name]="clase.icono" slot="start" class="clase-icono"></ion-icon>
             <ion-label>
@@ -42,7 +42,7 @@
             <div class="clase-info">
               <span>
                 <ion-icon name="people-outline"></ion-icon>
-                <b>{{ clase.capacidad }}</b> cupos
+                <b>{{ clase.cupos_disponibles }}</b> cupos
               </span>
               <span>
                 <ion-icon name="calendar-outline"></ion-icon>
@@ -62,7 +62,7 @@
     <!-- Trainers -->
     <ng-container *ngIf="opcion === 'trainers'">
       <ion-accordion-group expand="single">
-        <ion-accordion *ngFor="let trainer of trainers" [value]="trainer.id" class="accordion-card" [style.--accent-color]="trainer.color">
+        <ion-accordion *ngFor="let trainer of trainers" [value]="trainer.id_trainer" class="accordion-card" [style.--accent-color]="trainer.color">
           <ion-item slot="header" color="light">
             <ion-icon [name]="trainer.icono" slot="start" class="clase-icono"></ion-icon>
             <ion-label>
@@ -77,9 +77,30 @@
                 {{ trainer.contacto }}
               </span>
             </div>
-            <ion-button expand="block" color="primary" (click)="contactarTrainer(trainer)">
+
+            <div class="selector-fecha">
+              <ion-label>Fecha y Hora sesión</ion-label>
+              <ion-datetime
+                [(ngModel)]="fechaHoraSeleccionadaTrainer[trainer.id_trainer]"
+                presentation="date-time"
+                name="fecha_trainer_{{trainer.id_trainer}}">
+              </ion-datetime>
+
+              <div *ngIf="getHorariosTrainerTomados(trainer.id_trainer).length > 0" class="horarios-tomados">
+                <ion-label color="danger">
+                  Reservas tuyas:
+                  <ul>
+                    <li *ngFor="let h of getHorariosTrainerTomados(trainer.id_trainer)">
+                      {{ h | date:'EEE d/MM HH:mm' }}
+                    </li>
+                  </ul>
+                </ion-label>
+              </div>
+            </div>
+
+            <ion-button expand="block" color="primary" (click)="reservarTrainer(trainer)">
               <ion-icon name="chatbubble-ellipses-outline" slot="start"></ion-icon>
-              Contactar
+              Reservar Trainer
             </ion-button>
             <img [src]="trainer.imagen" alt="{{ trainer.nombre }}" class="img-accordion" />
           </div>
@@ -90,7 +111,7 @@
     <!-- Reservas de Espacios -->
     <ng-container *ngIf="opcion === 'espacios'">
       <ion-accordion-group>
-        <ion-accordion *ngFor="let espacio of espacios; trackBy: trackByEspacioId" [value]="espacio.id" class="accordion-card" [style.--accent-color]="espacio.color">
+        <ion-accordion *ngFor="let espacio of espacios; trackBy: trackByEspacioId" [value]="espacio.id_espacio" class="accordion-card" [style.--accent-color]="espacio.color">
           <ion-item slot="header" color="light">
             <ion-icon [name]="espacio.icono" slot="start" class="clase-icono"></ion-icon>
             <ion-label>
@@ -102,28 +123,28 @@
             <div class="clase-info capacidad-arriba">
           <span>
             <ion-icon name="people-outline"></ion-icon>
-            <b>{{ espacio.capacidad }}</b> personas
+            <b>{{ espacio.capacidad || 0}}</b> personas
           </span>
         </div>
         <div class="selector-fecha">
-          <ion-label>Fecha y Hora</ion-label>
-         <ion-datetime
-  [(ngModel)]="fechaHoraSeleccionada[espacio.id]"
-(ionChange)="onFechaHoraChange($event, espacio.id)"
-presentation="date-time"
-name="fecha_hora_{{espacio.id}}">
-</ion-datetime>
-<div *ngIf="getHorariosTomados(espacio.id).length > 0" class="horarios-tomados">
-  <ion-label color="danger">
-    Horarios ya reservados:
-    <ul>
-      <li *ngFor="let h of getHorariosTomados(espacio.id)">
-        {{ h | date:'EEEE d/MM HH:mm' }}
-      </li>
-    </ul>
-  </ion-label>
-</div>
-        </div>
+              <ion-label>Fecha y Hora</ion-label>
+              <ion-datetime
+                [(ngModel)]="fechaHoraSeleccionadaEspacio[espacio.id_espacio]"
+                presentation="date-time"
+                name="fecha_hora_{{espacio.id_espacio}}">
+              </ion-datetime>
+
+              <div *ngIf="getHorariosEspacioTomados(espacio.id_espacio).length > 0" class="horarios-tomados">
+                <ion-label color="danger">
+                  Horarios ya reservados:
+                  <ul>
+                    <li *ngFor="let h of getHorariosEspacioTomados(espacio.id_espacio)">
+                      {{ h | date:'EEEE d/MM HH:mm' }}
+                    </li>
+                  </ul>
+                </ion-label>
+              </div>
+            </div>
             <ion-button expand="block" color="tertiary" (click)="reservarEspacio(espacio)">
               <ion-icon name="calendar-outline" slot="start"></ion-icon>
               Reservar Espacio

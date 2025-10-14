@@ -311,6 +311,58 @@ app.delete('/api/espacios/reservas/:id', async (req, res) => {
   }
 });
 
+
+app.post('/api/trainers/reservas', async (req, res) => {
+  try {
+    const { id_trainer, id_cliente, fecha_reserva, descripcion } = req.body;
+    if (!id_trainer || !id_cliente || !fecha_reserva) {
+      return res.status(400).json({ error: 'Faltan datos' });
+    }
+    const r = await pool.query(
+      `INSERT INTO reserva_trainer (id_trainer, id_cliente, fecha_reserva, descripcion)
+       VALUES ($1,$2,$3,$4) RETURNING *`,
+      [id_trainer, id_cliente, fecha_reserva, descripcion ?? null]
+    );
+    res.status(201).json(r.rows[0]);
+  } catch (err) {
+    if (String(err.message).includes('uq_reserva_trainer')) {
+      return res.status(409).json({ error: 'Ese trainer ya tiene una reserva en ese horario' });
+    }
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Reservas de trainers por cliente
+app.get('/api/clientes/:idCliente/trainers/reservas', async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT rt.id_reserva_trainer, rt.id_trainer, rt.id_cliente, rt.fecha_reserva, rt.descripcion,
+              t.nombre AS trainer_nombre, t.especialidad
+       FROM reserva_trainer rt
+       JOIN trainer t ON t.id_trainer = rt.id_trainer
+       WHERE rt.id_cliente = $1
+       ORDER BY rt.fecha_reserva DESC`,
+      [req.params.idCliente]
+    );
+    res.json(r.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Eliminar reserva de trainer
+app.delete('/api/trainers/reservas/:id', async (req, res) => {
+  try {
+    const r = await pool.query('DELETE FROM reserva_trainer WHERE id_reserva_trainer = $1', [req.params.id]);
+    if (r.rowCount === 0) return res.sendStatus(404);
+    res.sendStatus(204);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`API corriendo en puerto ${PORT}`);

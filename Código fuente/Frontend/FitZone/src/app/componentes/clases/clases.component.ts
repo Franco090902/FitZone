@@ -1,38 +1,48 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel,IonSelect,
-  IonSelectOption, IonAccordionGroup,IonAccordion,IonItem,} from '@ionic/angular/standalone';
-import { registerLocaleData } from '@angular/common';
-import localeEs from '@angular/common/locales/es';
 import { FormsModule } from '@angular/forms';
-import { ClasesServicio } from 'src/app/servicios/clases-servicio';
-registerLocaleData(localeEs);
-import { ChangeDetectorRef } from '@angular/core';
-import { ToastController } from '@ionic/angular';
-import { IonicModule } from '@ionic/angular';
-import { TrainersApiService } from 'src/app/servicios/trainers-api-service';
-import { ReservasApiService } from 'src/app/servicios/reservas-api-service';
+import { IonicModule, ToastController } from '@ionic/angular';
+
+import { ClasesApiService, Clase } from 'src/app/servicios/clases-api-service';
+import { TrainersApiService, Trainer } from 'src/app/servicios/trainers-api-service';
+import {
+  ReservasApiService,
+  Espacio,
+  ReservaEspacio,
+  ReservaTrainer
+} from 'src/app/servicios/reservas-api-service';
 
 @Component({
   selector: 'app-clases',
   standalone: true,
   templateUrl: './clases.component.html',
   styleUrls: ['./clases.component.scss'],
-  imports: [
-    CommonModule, FormsModule, DatePipe, IonicModule 
-  ]
+  imports: [CommonModule, FormsModule, DatePipe, IonicModule]
 })
-export class ClasesComponent  implements OnInit {
- opcion = 'grupales';
- clases:any[]=[];
- trainers: any[] = [];
- espacios: any[] = [];
-reservasEspacios: { espacioId: number, fecha_hora: string }[] = [];
-fechaHoraSeleccionada: { [espacioId: number]: string | null } = {};
-  constructor(private clasesServicio: ClasesServicio, private toastController: ToastController,private cdr: ChangeDetectorRef) { 
-    
-  }
+export class ClasesComponent implements OnInit {
 
+  opcion: 'grupales' | 'trainers' | 'espacios' = 'grupales';
+
+  clases: (Clase & { icono?: string; color?: string; imagen?: string })[] = [];
+  trainers: (Trainer & { icono?: string; color?: string; imagen?: string })[] = [];
+  espacios: (Espacio & { icono?: string; color?: string; imagen?: string })[] = [];
+
+  fechaHoraSeleccionadaEspacio: { [idEspacio: number]: string | null } = {};
+  fechaHoraSeleccionadaTrainer: { [idTrainer: number]: string | null } = {};
+
+  reservasEspaciosCliente: ReservaEspacio[] = [];
+  reservasTrainersCliente: ReservaTrainer[] = [];
+
+  idCliente?: number;
+  idGimnasio?: number | null;
+
+  constructor(
+    private clasesApi: ClasesApiService,
+    private trainersApi: TrainersApiService,
+    private reservasApi: ReservasApiService,
+    private toastController: ToastController,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   async presentToast(message: string, color: string = 'primary') {
     const toast = await this.toastController.create({
@@ -41,91 +51,182 @@ fechaHoraSeleccionada: { [espacioId: number]: string | null } = {};
       position: 'bottom',
       color,
       cssClass: 'custom-toast',
-      buttons: [
-        {
-          text: '✖',
-          role: 'cancel',
-        },
-      ],
+      buttons: [{ text: '✖', role: 'cancel' }]
     });
     await toast.present();
   }
+
   ngOnInit() {
-
-    this.clases= this.clasesServicio.getClases();
-    this.trainers= this.clasesServicio.getTrainers();
-    this.espacios= this.clasesServicio.getEspacios();
-    this.espacios.forEach(espacio => {
-    this.fechaHoraSeleccionada[espacio.id] = null;
-});
+    const idUsuario = Number(localStorage.getItem('id_usuario') || 0);
+    if (idUsuario) {
+      this.reservasApi.getClienteByUsuario(idUsuario).subscribe({
+        next: (c) => {
+          this.idCliente = c.id_cliente;
+          this.idGimnasio = c.id_gimnasio;
+          this.cargarTodo();
+        },
+        error: () => this.cargarTodo()
+      });
+    } else {
+      this.cargarTodo();
+    }
   }
- reservarClase(clase: any) {
-    // Aquí deberás implementar la lógica de reserva con backend en el futuro
-   if (clase.capacidad > 0){
-    clase.capacidad = clase.capacidad -1;
-    this.presentToast(
-        `✅ Reservaste la clase: ${clase.nombre}. Cupos restantes: ${clase.capacidad}`,
-        'success'
-      );
-   } else{
-    this.presentToast('⚠️ No quedan cupos disponibles para esta clase', 'danger');
-   }
-  }
-  
-  contactarTrainer(trainer: any) {
-    this.presentToast(`✅ Reservaste la clase:  ${trainer.nombre}`);
-  }
-onFechaHoraChange(event: any, espacioId: number) {
-    if (event.detail && event.detail.value) {
-      this.fechaHoraSeleccionada[espacioId] = event.detail.value;
-    } else {
-      this.fechaHoraSeleccionada[espacioId] = null;
-    }
-  } 
 
-trackByEspacioId(index: number, espacio: any): number {
-    return espacio.id;
-  }
+  private cargarTodo() {
+    // Clases
+    this.clasesApi.getClases(this.idGimnasio || undefined).subscribe({
+      next: (data: Clase[]) => {
+        this.clases = data.map((c: Clase) => ({
+          ...c,
+          icono: this.pickIcon(c.nombre),
+          color: this.pickColor(c.nombre),
+          imagen: this.pickImage(c.nombre)
+        }));
+      }
+    });
 
-  reservarEspacio(espacio: any) {
-     const fecha_hora_seleccionada = this.fechaHoraSeleccionada[espacio.id];
-    console.log('Valor de fecha_hora:', fecha_hora_seleccionada);
-    
-    if (!fecha_hora_seleccionada) {
-      this.presentToast('⚠️ Selecciona una fecha y hora para la reserva.', 'warning');
-      return;
-    }
-    
-    const horariosTomados = this.getHorariosTomados(espacio.id);
-    const fechaSeleccionada = new Date(fecha_hora_seleccionada).toISOString();
-    
-    if (horariosTomados.some(h => new Date(h).toISOString() === fechaSeleccionada)) {
-         this.presentToast('⚠️ Ese horario ya está reservado. Elige otro.', 'danger');
+    // Trainers
+    this.trainersApi.getTrainers().subscribe({
+      next: (data: Trainer[]) => {
+        this.trainers = data.map((t: Trainer) => ({
+          ...t,
+          icono: 'person-outline',
+          color: '#7C4DFF',
+          imagen: 'assets/personal Trainer Generic.jpg'
+        }));
+      }
+    });
+
+    // Espacios
+    this.reservasApi.getEspacios(this.idGimnasio || undefined).subscribe({
+      next: (data: Espacio[]) => {
+        this.espacios = data.map((e: Espacio) => ({
+          ...e,
+          icono: 'home-outline',
+          color: '#00B8D4',
+          imagen: 'assets/imagen SUM.jpg'
+        }));
+        this.fechaHoraSeleccionadaEspacio = {};
+        this.espacios.forEach(e => this.fechaHoraSeleccionadaEspacio[e.id_espacio] = null);
+      }
+    });
+
+    // Reservas existentes del cliente
+    if (this.idCliente) {
+      this.reservasApi.getReservasEspacioPorCliente(this.idCliente!).subscribe(r => this.reservasEspaciosCliente = r);
+      this.reservasApi.getReservasTrainerPorCliente(this.idCliente!).subscribe(r => this.reservasTrainersCliente = r);
+    }
+  }
+
+  // trackBy para mejorar rendimiento y evitar warnings
+  trackByEspacioId(_index: number, espacio: Espacio) {
+    return espacio.id_espacio;
+  }
+
+  reservarClase(clase: Clase) {
+    if (!this.idCliente) { this.presentToast('Inicia sesión para reservar', 'warning'); return; }
+    if (clase.cupos_disponibles <= 0) { this.presentToast('Sin cupos', 'danger'); return; }
+
+    this.reservasApi.crearReservaClase({
+      id_clase: clase.id_clase,
+      fecha_reserva: new Date().toISOString(),
+      id_cliente: this.idCliente,
+      descripcion: 'Reserva clase'
+    }).subscribe({
+      next: () => { this.presentToast('Clase reservada', 'success'); this.cargarTodo(); },
+      error: e => this.presentToast(e?.error?.error || 'Error reservando', 'danger')
+    });
+  }
+
+  reservarEspacio(espacio: Espacio) {
+    if (!this.idCliente) { this.presentToast('Inicia sesión para reservar', 'warning'); return; }
+    const sel = this.fechaHoraSeleccionadaEspacio[espacio.id_espacio];
+    if (!sel) { this.presentToast('Selecciona fecha/hora', 'warning'); return; }
+
+    const iso = new Date(sel).toISOString();
+    if (this.reservasEspaciosCliente.some(r =>
+      r.id_espacio === espacio.id_espacio &&
+      new Date(r.fecha_reserva).toISOString() === iso)) {
+      this.presentToast('Ya reservaste ese horario', 'danger');
       return;
     }
-    
-    this.reservasEspacios.push({ 
-      espacioId: espacio.id, 
-      fecha_hora: fechaSeleccionada 
+
+    this.reservasApi.crearReservaEspacio({
+      id_espacio: espacio.id_espacio,
+      id_cliente: this.idCliente,
+      fecha_reserva: iso,
+      descripcion: 'Reserva espacio'
+    }).subscribe({
+      next: () => {
+        this.presentToast('Espacio reservado', 'success');
+        this.fechaHoraSeleccionadaEspacio[espacio.id_espacio] = null;
+        this.reservasApi.getReservasEspacioPorCliente(this.idCliente!).subscribe(r => this.reservasEspaciosCliente = r);
+        this.cdr.detectChanges();
+      },
+      error: e => this.presentToast(e?.error?.error || 'Error reservando espacio', 'danger')
     });
-    
-    this.presentToast(
-      `✅ Reservaste el espacio: ${espacio.nombre} para el ${new Date(
-        fecha_hora_seleccionada
-      ).toLocaleString('es-ES')}`,
-      'success'
-    );
-    this.fechaHoraSeleccionada[espacio.id] = null;
-    this.cdr.detectChanges();
   }
 
-  getHorariosTomados(espacioId: number): string[] {
-    return this.reservasEspacios
-      .filter(r => r.espacioId === espacioId)
-      .map(r => r.fecha_hora);
+  reservarTrainer(trainer: Trainer) {
+    if (!this.idCliente) { this.presentToast('Inicia sesión para reservar', 'warning'); return; }
+    const sel = this.fechaHoraSeleccionadaTrainer[trainer.id_trainer];
+    if (!sel) { this.presentToast('Selecciona fecha/hora', 'warning'); return; }
+
+    const iso = new Date(sel).toISOString();
+    if (this.reservasTrainersCliente.some(r =>
+      r.id_trainer === trainer.id_trainer &&
+      new Date(r.fecha_reserva).toISOString() === iso)) {
+      this.presentToast('Ya reservaste ese horario con el trainer', 'danger');
+      return;
+    }
+
+    this.reservasApi.crearReservaTrainer({
+      id_trainer: trainer.id_trainer,
+      id_cliente: this.idCliente,
+      fecha_reserva: iso,
+      descripcion: 'Reserva trainer'
+    }).subscribe({
+      next: () => {
+        this.presentToast('Trainer reservado', 'success');
+        this.fechaHoraSeleccionadaTrainer[trainer.id_trainer] = null;
+        this.reservasApi.getReservasTrainerPorCliente(this.idCliente!).subscribe(r => this.reservasTrainersCliente = r);
+        this.cdr.detectChanges();
+      },
+      error: e => this.presentToast(e?.error?.error || 'Error reservando trainer', 'danger')
+    });
   }
 
+  getHorariosTrainerTomados(idTrainer: number): string[] {
+    return this.reservasTrainersCliente
+      .filter(r => r.id_trainer === idTrainer)
+      .map(r => r.fecha_reserva);
+  }
 
+  getHorariosEspacioTomados(idEspacio: number): string[] {
+    return this.reservasEspaciosCliente
+      .filter(r => r.id_espacio === idEspacio)
+      .map(r => r.fecha_reserva);
+  }
 
-  
+  private pickIcon(n: string) {
+    n = n.toLowerCase();
+    if (n.includes('yoga')) return 'accessibility-outline';
+    if (n.includes('spin')) return 'bicycle-outline';
+    if (n.includes('hiit') || n.includes('funcional')) return 'flame-outline';
+    return 'calendar-outline';
+  }
+  private pickColor(n: string) {
+    n = n.toLowerCase();
+    if (n.includes('yoga')) return '#7C4DFF';
+    if (n.includes('spin')) return '#00B8D4';
+    if (n.includes('hiit') || n.includes('funcional')) return '#212121';
+    return '#1976D2';
+  }
+  private pickImage(n: string) {
+    n = n.toLowerCase();
+    if (n.includes('yoga')) return 'assets/imagen Yoga Flow.jpg';
+    if (n.includes('spin')) return 'assets/imagen Spinning.jpg';
+    if (n.includes('hiit') || n.includes('funcional')) return 'assets/imagen Funtional Hiit.jpg';
+    return 'assets/placeholder.jpg';
+  }
 }
