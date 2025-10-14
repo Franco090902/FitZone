@@ -25,7 +25,7 @@ email = '';
         tipo_usuario: this.tipoUsuario,
         email: this.email
       }).subscribe({
-        next: () => {
+        next: (res) => {
           // Guardar auth en localStorage para el guard
           localStorage.setItem('auth', 'true');
           localStorage.setItem('tipoUsuario', this.tipoUsuario);
