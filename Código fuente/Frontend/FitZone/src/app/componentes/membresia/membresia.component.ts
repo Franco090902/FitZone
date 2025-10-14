@@ -12,7 +12,11 @@ import {IonHeader,
   IonIcon,
   IonGrid,
   IonRow,
-  IonCol} from '@ionic/angular/standalone';
+  IonCol,
+  IonAccordion, 
+  IonAccordionGroup, 
+  IonItem, 
+  IonLabel} from '@ionic/angular/standalone';
 @Component({
   selector: 'app-membresia',
   standalone: true,
@@ -31,7 +35,11 @@ import {IonHeader,
     IonIcon,
     IonGrid,
     IonRow,
-    IonCol]
+    IonCol,
+    IonLabel,
+    IonItem,
+    IonAccordion,
+    IonAccordionGroup]
 })
 export class MembresiaComponent  implements OnInit {
 

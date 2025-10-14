@@ -63,7 +63,6 @@
 }
 
 .button {
-  background: #1976d2;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -75,4 +74,19 @@
   &:hover {
     background: #1565c0;
 };
+}
+.accordion-card {
+  margin-bottom: 25px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+}
+ion-title {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Rubik", sans-serif;
+  font-size: 26px;
 }

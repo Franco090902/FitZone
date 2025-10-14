@@ -1,77 +1,79 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>
-      <ion-icon name="card-outline" style="vertical-align: middle; margin-right: 8px;"></ion-icon>
-      Membresías
+      FitZone
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="membresias-container">
+<ion-content [fullscreen]="true">
   <div class="bienvenida">
     <ion-icon name="sparkles-outline" class="icono-bienvenida"></ion-icon>
-    <span>¡Elegí tu plan ideal!</span>
+ 
   </div>
 
-  <ion-grid>
-    <ion-row>
+  <div class="clases-container">
+    <ion-accordion-group expand="single">
       <!-- Plan Básico -->
-      <ion-col size="12" size-md="4">
-        <ion-card class="membresia-card basic">
-          <ion-card-header>
-            <ion-card-title>Basic</ion-card-title>
-            <ion-card-subtitle>$19.99 / mes</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <ul>
-              <li>Acceso a entrenamientos básicos</li>
-              <li>Soporte por email</li>
-              <li>Descuentos en productos</li>
-            </ul>
-            <ion-button expand="block" color="success">Pagar</ion-button>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+      <ion-accordion value="basic" class="accordion-card">
+        <ion-item slot="header" color="light">
+          <ion-icon name="star-outline" slot="start" class="clase-icono"></ion-icon>
+          <ion-label>
+            <span class="clase-nombre">Basic</span>
+            <div class="clase-descripcion">$19.99 / mes</div>
+          </ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <ul>
+            <li>Acceso a entrenamientos básicos</li>
+            <li>Soporte por email</li>
+            <li>Descuentos en productos</li>
+          </ul>
+          <ion-button expand="block" color="success">Pagar</ion-button>
+        </div>
+      </ion-accordion>
 
       <!-- Plan Standard -->
-      <ion-col size="12" size-md="4">
-        <ion-card class="membresia-card standard">
-          <ion-card-header>
-            <ion-card-title>Standard</ion-card-title>
-            <ion-card-subtitle>$29.99 / mes</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <ul>
-              <li>Acceso a todas las clases</li>
-              <li>Planes de entrenamiento personalizados</li>
-              <li>Plan básico de nutrición</li>
-              <li>Seguimiento mensual de progreso</li>
-            </ul>
-            <ion-button expand="block" color="warning">Pagar</ion-button>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+      <ion-accordion value="standard" class="accordion-card">
+        <ion-item slot="header" color="light">
+          <ion-icon name="medal-outline" slot="start" class="clase-icono"></ion-icon>
+          <ion-label>
+            <span class="clase-nombre">Standard</span>
+            <div class="clase-descripcion">$29.99 / mes</div>
+          </ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <ul>
+            <li>Acceso a todas las clases</li>
+            <li>Planes de entrenamiento personalizados</li>
+            <li>Plan básico de nutrición</li>
+            <li>Seguimiento mensual de progreso</li>
+          </ul>
+          <ion-button expand="block" color="warning">Pagar</ion-button>
+        </div>
+      </ion-accordion>
 
       <!-- Plan Premium -->
-      <ion-col size="12" size-md="4">
-        <ion-card class="membresia-card premium">
-          <ion-card-header>
-            <ion-card-title>Premium</ion-card-title>
-            <ion-card-subtitle>$39.99 / mes</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <ul>
-              <li>Acceso a todas las clases</li>
-              <li>Planes de entrenamiento personalizados</li>
-              <li>Plan avanzado de nutrición</li>
-              <li>Seguimiento semanal de progreso</li>
-              <li>Sesiones privadas de coaching</li>
-              <li>Comunidad y soporte</li>
-            </ul>
-            <ion-button expand="block" color="tertiary">Pagar</ion-button>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+      <ion-accordion value="premium" class="accordion-card">
+        <ion-item slot="header" color="light">
+          <ion-icon name="diamond-outline" slot="start" class="clase-icono"></ion-icon>
+          <ion-label>
+            <span class="clase-nombre">Premium</span>
+            <div class="clase-descripcion">$39.99 / mes</div>
+          </ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <ul>
+            <li>Acceso a todas las clases</li>
+            <li>Planes de entrenamiento personalizados</li>
+            <li>Plan avanzado de nutrición</li>
+            <li>Seguimiento semanal de progreso</li>
+            <li>Sesiones privadas de coaching</li>
+            <li>Comunidad y soporte</li>
+          </ul>
+          <ion-button expand="block" color="tertiary">Pagar</ion-button>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </div>
 </ion-content>
