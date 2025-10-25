@@ -1,40 +1,108 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title class="titulo">FitZone</ion-title>
+    <ion-title class="titulo">FitZone Dashboard</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+  <ion-grid>
+    <!-- Información del Cliente -->
+    <ion-row *ngIf="clienteInfo">
+      <ion-col>
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Bienvenido/a {{clienteInfo.nombre}}</ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
 
-  <!-- Membresía -->
-  <ion-card button [routerLink]="['/membresia']" class="card-opcion">
-    <ion-card-header>
-      <ion-card-title>Membresía</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      Información sobre tu plan y estado de pago
-    </ion-card-content>
-  </ion-card>
+    <!-- Sección de Membresía -->
+    <ion-row *ngIf="membresia">
+      <ion-col>
+        <ion-card [routerLink]="['/membresia']" class="card-opcion">
+          <ion-card-header>
+            <ion-card-title>Tu Membresía</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item>
+                <ion-label>
+                  <h2>{{membresia.tipo}}</h2>
+                  <p>Válida hasta: {{membresia.fecha_fin | date}}</p>
+                  <p>Estado: {{membresia.estado}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
 
-  <!-- Entrenamientos -->
-  <ion-card button [routerLink]="['/entrenamientos']" class="card-opcion">
-    <ion-card-header>
-      <ion-card-title>Entrenamientos</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      Accedé a tus rutinas personalizadas
-    </ion-card-content>
-  </ion-card>
+    <!-- Sección de Reservas de Clases -->
+    <ion-row>
+      <ion-col>
+        <ion-card [routerLink]="['/clases']" class="card-opcion">
+          <ion-card-header>
+            <ion-card-title>Tus Clases Reservadas</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let reserva of reservas">
+                <ion-label>
+                  <h2>{{reserva.nombre_clase}}</h2>
+                  <p>Fecha: {{reserva.fecha | date:'shortDate'}}</p>
+                  <p>Hora: {{reserva.hora}}</p>
+                  <p>Instructor: {{reserva.instructor}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item *ngIf="reservas.length === 0">
+                <ion-label>No tienes clases reservadas</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
 
-  <!-- Clases -->
-  <ion-card button [routerLink]="['/clases']" class="card-opcion">
-    <ion-card-header>
-      <ion-card-title>Clases</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      Revisá horarios y reservas disponibles
-    </ion-card-content>
-  </ion-card>
+    <!-- Sección de Espacios Reservados -->
+    <ion-row>
+      <ion-col>
+        <ion-card class="card-opcion">
+          <ion-card-header>
+            <ion-card-title>Espacios Reservados</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let reserva of reservasEspacios">
+                <ion-label>
+                  <h2>{{reserva.nombre_espacio}}</h2>
+                  <p>Fecha: {{reserva.fecha | date:'shortDate'}}</p>
+                  <p>Hora: {{reserva.hora}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item *ngIf="reservasEspacios.length === 0">
+                <ion-label>No tienes espacios reservados</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
 
+    <!-- Entrenamientos -->
+    <ion-row>
+      <ion-col>
+        <ion-card [routerLink]="['/entrenamientos']" class="card-opcion">
+          <ion-card-header>
+            <ion-card-title>Entrenamientos</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Accedé a tus rutinas personalizadas
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
 
