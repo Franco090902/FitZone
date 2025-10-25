@@ -34,4 +34,9 @@ export class DashboardService {
   getClienteInfo(idCliente: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/clientes/${idCliente}`);
   }
+
+  // Obtener reservas de trainers
+  getReservasTrainers(idCliente: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/clientes/${idCliente}/trainers/reservas`);
+  }
 }

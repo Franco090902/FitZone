@@ -6,17 +6,6 @@
 
 <ion-content class="ion-padding">
   <ion-grid>
-    <!-- Información del Cliente -->
-    <ion-row *ngIf="clienteInfo">
-      <ion-col>
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Bienvenido/a {{clienteInfo.nombre}}</ion-card-title>
-          </ion-card-header>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-
     <!-- Sección de Membresía -->
     <ion-row *ngIf="membresia">
       <ion-col>
@@ -48,17 +37,50 @@
           </ion-card-header>
           <ion-card-content>
             <ion-list>
-              <ion-item *ngFor="let reserva of reservas">
-                <ion-label>
-                  <h2>{{reserva.nombre_clase}}</h2>
-                  <p>Fecha: {{reserva.fecha | date:'shortDate'}}</p>
-                  <p>Hora: {{reserva.hora}}</p>
-                  <p>Instructor: {{reserva.instructor}}</p>
-                </ion-label>
-              </ion-item>
-              <ion-item *ngIf="reservas.length === 0">
-                <ion-label>No tienes clases reservadas</ion-label>
-              </ion-item>
+              <ng-container *ngIf="reservasClases && reservasClases.length > 0; else noClases">
+                <ion-item *ngFor="let reserva of reservasClases">
+                  <ion-label>
+                    <h2>{{reserva.clase_nombre}}</h2>
+                    <p><strong>Fecha:</strong> {{reserva.clase_fecha_hora | date:'dd/MM/yyyy HH:mm'}}</p>
+                    <p *ngIf="reserva.descripcion"><strong>Nota:</strong> {{reserva.descripcion}}</p>
+                  </ion-label>
+                </ion-item>
+              </ng-container>
+              <ng-template #noClases>
+                <ion-item>
+                  <ion-label>No tienes clases reservadas</ion-label>
+                </ion-item>
+              </ng-template>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <!-- Sección de Reservas de Trainers -->
+    <ion-row>
+      <ion-col>
+        <ion-card class="card-opcion">
+          <ion-card-header>
+            <ion-card-title>Reservas con Trainers</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ng-container *ngIf="reservasTrainers && reservasTrainers.length > 0; else noTrainers">
+                <ion-item *ngFor="let reserva of reservasTrainers">
+                  <ion-label>
+                    <h2>{{reserva.trainer_nombre}}</h2>
+                    <p><strong>Especialidad:</strong> {{reserva.especialidad}}</p>
+                    <p><strong>Fecha:</strong> {{reserva.fecha_reserva | date:'dd/MM/yyyy HH:mm'}}</p>
+                    <p *ngIf="reserva.descripcion"><strong>Nota:</strong> {{reserva.descripcion}}</p>
+                  </ion-label>
+                </ion-item>
+              </ng-container>
+              <ng-template #noTrainers>
+                <ion-item>
+                  <ion-label>No tienes reservas con trainers</ion-label>
+                </ion-item>
+              </ng-template>
             </ion-list>
           </ion-card-content>
         </ion-card>
@@ -74,16 +96,20 @@
           </ion-card-header>
           <ion-card-content>
             <ion-list>
-              <ion-item *ngFor="let reserva of reservasEspacios">
-                <ion-label>
-                  <h2>{{reserva.nombre_espacio}}</h2>
-                  <p>Fecha: {{reserva.fecha | date:'shortDate'}}</p>
-                  <p>Hora: {{reserva.hora}}</p>
-                </ion-label>
-              </ion-item>
-              <ion-item *ngIf="reservasEspacios.length === 0">
-                <ion-label>No tienes espacios reservados</ion-label>
-              </ion-item>
+              <ng-container *ngIf="reservasEspacios && reservasEspacios.length > 0; else noEspacios">
+                <ion-item *ngFor="let reserva of reservasEspacios">
+                  <ion-label>
+                    <h2>{{reserva.espacio_nombre}}</h2>
+                    <p><strong>Fecha:</strong> {{reserva.fecha_reserva | date:'dd/MM/yyyy HH:mm'}}</p>
+                    <p *ngIf="reserva.descripcion"><strong>Nota:</strong> {{reserva.descripcion}}</p>
+                  </ion-label>
+                </ion-item>
+              </ng-container>
+              <ng-template #noEspacios>
+                <ion-item>
+                  <ion-label>No tienes espacios reservados</ion-label>
+                </ion-item>
+              </ng-template>
             </ion-list>
           </ion-card-content>
         </ion-card>
