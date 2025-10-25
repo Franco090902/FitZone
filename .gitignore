@@ -1,0 +1,84 @@
+# Dependencias
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Angular/Ionic
+.ionic/
+www/
+platforms/
+plugins/
+*.sublime-project
+*.sublime-workspace
+.idea/
+.sass-cache/
+.tmp/
+.versions/
+coverage/
+dist/
+tmp/
+temp/
+hooks/
+.angular/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+UserInterfaceState.xcuserstate
+
+# Entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Archivos compilados
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Logs y bases de datos
+*.log
+*.sql
+*.sqlite
+
+# Archivos de respaldo
+*.bak
+*.swp
+*.swo
+*~
+
+# Build
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Capacitor
+/ios/App/public/
+/android/app/src/main/assets/public/
+
+# Tests
+/coverage
+/.nyc_output
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+# System Files
+.DS_Store
+Thumbs.db

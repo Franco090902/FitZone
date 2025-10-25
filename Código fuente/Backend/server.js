@@ -171,6 +171,24 @@ app.get('/api/clientes/by-usuario/:idUsuario', async (req, res) => {
   }
 });
 
+// Obtener información de un cliente por su ID
+app.get('/api/clientes/:id', async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT c.id_cliente, c.nombre, c.apellido, c.email, c.id_gimnasio,
+              g.nombre as gimnasio_nombre
+       FROM cliente c
+       LEFT JOIN gimnasio g ON g.id_gimnasio = c.id_gimnasio
+       WHERE c.id_cliente = $1`,
+      [req.params.id]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Cliente no encontrado' });
+    res.json(r.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Crear reserva con control de cupos
 app.post('/api/reservas', async (req, res) => {
   try {
