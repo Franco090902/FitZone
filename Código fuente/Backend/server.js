@@ -361,39 +361,7 @@ app.delete('/api/trainers/reservas/:id', async (req, res) => {
   }
 });
 
-//  LOGIN DE USUARIO
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const result = await pool.query('SELECT * FROM cliente WHERE email = $1', [email]);
-    if (result.rows.length === 0) return res.status(400).json({ error: 'Usuario no encontrado' });
 
-    const user = result.rows[0];
-    const valid = await bcrypt.compare(password, user.password_hash);
-
-    if (!valid) return res.status(401).json({ error: 'Contraseña incorrecta' });
-    res.json({ message: 'Login exitoso', user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-});
-
-//  REGISTRO DE NUEVO USUARIO
-app.post('/api/register', async (req, res) => {
-  const { nombre, email, password } = req.body;
-  try {
-    const hash = await bcrypt.hash(password, 10);
-    const result = await pool.query(
-      'INSERT INTO cliente (nombre, email, password_hash) VALUES ($1, $2, $3) RETURNING *',
-      [nombre, email, hash]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al registrar usuario' });
-  }
-});
 
 //  OBTENER MEMBRESÍA DE UN CLIENTE
 app.get('/api/membresia/:idCliente', async (req, res) => {
@@ -425,25 +393,7 @@ app.get('/api/reservas/:idCliente', async (req, res) => {
   }
 });
 
-//  CREAR UNA NUEVA RESERVA
-app.post('/api/reservas', async (req, res) => {
-  const { id_cliente, tipo, fecha, hora } = req.body;
-  try {
-    const result = await pool.query(
-      'INSERT INTO reserva (id_cliente, tipo, fecha, hora) VALUES ($1, $2, $3, $4) RETURNING *',
-      [id_cliente, tipo, fecha, hora]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al crear reserva' });
-  }
-});
 
-//  TEST DEL SERVIDOR
-app.get('/', (req, res) => {
-  res.send('Servidor backend funcionando ');
-});
 const PORT = process.env.PORT || 3000;
 // Iniciar servidor
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
