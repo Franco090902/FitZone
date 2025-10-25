@@ -9,6 +9,7 @@ export interface Trainer {
   especialidad: string;
   contacto: string;
   id_gimnasio: number;
+  imagen?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })

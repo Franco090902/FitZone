@@ -11,6 +11,7 @@ import {
   ReservaEspacio,
   ReservaTrainer
 } from 'src/app/servicios/reservas-api-service';
+import { zonedTimeToUtc } from 'date-fns-tz';
 
 @Component({
   selector: 'app-clases',
@@ -20,6 +21,8 @@ import {
   imports: [CommonModule, FormsModule, DatePipe, IonicModule]
 })
 export class ClasesComponent implements OnInit {
+
+readonly ARG_TZ = 'America/Argentina/Buenos_Aires';
 
   opcion: 'grupales' | 'trainers' | 'espacios' = 'grupales';
 
@@ -92,7 +95,7 @@ export class ClasesComponent implements OnInit {
           ...t,
           icono: 'person-outline',
           color: '#7C4DFF',
-          imagen: 'assets/personal Trainer Generic.jpg'
+          imagen: this.resolveTrainerImage(t),
         }));
       }
     });
@@ -123,6 +126,46 @@ export class ClasesComponent implements OnInit {
     return espacio.id_espacio;
   }
 
+private resolveTrainerImage(t: Trainer & { imagen?: string | null }): string {
+  const val = (t.imagen ?? '').trim();
+
+  // 1) Si la DB trae algo, respetarlo
+  if (val) {
+    // http(s) absoluto
+    if (/^https?:\/\//i.test(val)) return val;
+    // ya viene con 'assets/...'
+    if (val.startsWith('assets/')) return val;
+    // viene relativo 'trainers/...'
+    if (val.startsWith('trainers/')) return `assets/${val}`;
+    // viene sólo el nombre de archivo -> asumir carpeta trainers/
+    return `assets/trainers/${val}`;
+  }
+
+  // 2) Fallback por id: coloca archivos 'src/assets/trainers/trainer-<id>.jpg'
+  if (t.id_trainer) {
+    return `assets/trainers/trainer-${t.id_trainer}.jpg`;
+  }
+
+  // 3) Fallback por nombre “slugificado”: 'src/assets/trainers/<slug>.jpg'
+  const slug = this.slugifyNombre(t.nombre);
+  return `assets/trainers/${slug}.jpg`;
+}
+
+private slugifyNombre(nombre: string): string {
+  return nombre
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // saca acentos
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')                     // espacios -> guiones
+    .replace(/(^-|-$)/g, '');                        // trim guiones
+}
+
+// Imagen genérica si falla la carga
+onImgError(ev: Event) {
+  const img = ev.target as HTMLImageElement;
+  img.onerror = null; // evitar loop si placeholder falta
+  img.src = 'assets/trainers/placeholder.jpg';
+}
+
   reservarClase(clase: Clase) {
     if (!this.idCliente) { this.presentToast('Inicia sesión para reservar', 'warning'); return; }
     if (clase.cupos_disponibles <= 0) { this.presentToast('Sin cupos', 'danger'); return; }
@@ -143,7 +186,7 @@ export class ClasesComponent implements OnInit {
     const sel = this.fechaHoraSeleccionadaEspacio[espacio.id_espacio];
     if (!sel) { this.presentToast('Selecciona fecha/hora', 'warning'); return; }
 
-    const iso = new Date(sel).toISOString();
+    const iso = this.toArgUtcIso(sel);
     if (this.reservasEspaciosCliente.some(r =>
       r.id_espacio === espacio.id_espacio &&
       new Date(r.fecha_reserva).toISOString() === iso)) {
@@ -172,7 +215,7 @@ export class ClasesComponent implements OnInit {
     const sel = this.fechaHoraSeleccionadaTrainer[trainer.id_trainer];
     if (!sel) { this.presentToast('Selecciona fecha/hora', 'warning'); return; }
 
-    const iso = new Date(sel).toISOString();
+    const iso = this.toArgUtcIso(sel);
     if (this.reservasTrainersCliente.some(r =>
       r.id_trainer === trainer.id_trainer &&
       new Date(r.fecha_reserva).toISOString() === iso)) {
@@ -206,6 +249,17 @@ export class ClasesComponent implements OnInit {
     return this.reservasEspaciosCliente
       .filter(r => r.id_espacio === idEspacio)
       .map(r => r.fecha_reserva);
+  }
+
+// ---- Helper TZ Argentina -> UTC ISO ----
+  private toArgUtcIso(value: string): string {
+    if (!value) return new Date().toISOString();
+    // Si viene con Z u offset, normaliza a UTC
+    if (/[zZ]|[+-]\d{2}:\d{2}$/.test(value)) {
+      return new Date(value).toISOString();
+    }
+    // Si viene "YYYY-MM-DDTHH:mm" (sin zona), interprétalo en AR y pásalo a UTC
+    return zonedTimeToUtc(value, this.ARG_TZ).toISOString();
   }
 
   private pickIcon(n: string) {

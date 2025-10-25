@@ -145,7 +145,7 @@ app.get('/api/clases', async (req, res) => {
 app.get('/api/trainers', async (_req, res) => {
   try {
     const r = await pool.query(`
-      SELECT id_trainer, nombre, especialidad, contacto, id_gimnasio
+      SELECT id_trainer, nombre, especialidad, contacto, id_gimnasio, imagen
       FROM trainer
       ORDER BY nombre ASC
     `);
@@ -395,9 +395,6 @@ app.get('/api/reservas/:idCliente', async (req, res) => {
 
 
 const PORT = process.env.PORT || 3000;
-// Iniciar servidor
-app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
-
 
 app.listen(PORT, () => {
   console.log(`API corriendo en puerto ${PORT}`);
