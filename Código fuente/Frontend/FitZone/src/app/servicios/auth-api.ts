@@ -19,4 +19,8 @@ export class AuthApi {
   login(data: { username: string, password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, data);
   }
+
+  getClienteByUsuario(idUsuario: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/clientes/by-usuario/${idUsuario}`);
+  }
 }
