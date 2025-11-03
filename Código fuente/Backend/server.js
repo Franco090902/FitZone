@@ -371,3 +371,99 @@ app.listen(PORT, () => {
 // Logs de errores no capturados
 process.on('unhandledRejection', (e) => console.error('UNHANDLED REJECTION:', e));
 process.on('uncaughtException', (e) => console.error('UNCAUGHT EXCEPTION:', e));
+
+//   MEMBRESÍAS 
+// Obtener todos los planes de suscripción
+app.get('/api/membresias', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT id_plan_suscripcion, tipo, precio, id_gimnasio
+      FROM plansuscripcion
+      ORDER BY id_plan_suscripcion ASC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Obtener una membresía específica
+app.get('/api/membresias/:id', async (req, res) => {
+  try { 
+    const result = await pool.query(
+      `SELECT id_plan_suscripcion, tipo, precio, id_gimnasio
+       FROM plansuscripcion
+       WHERE id_plan_suscripcion = $1`,
+      [req.params.id]
+    );
+    if (result.rows.length === 0)
+      return res.status(404).json({ error: 'Membresía no encontrada' });
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Crear un nuevo plan de membresía
+app.post('/api/membresias', async (req, res) => {
+  try {
+    const { tipo, precio, id_gimnasio } = req.body;
+    if (!tipo || !precio || !id_gimnasio) {
+      return res.status(400).json({ error: 'Faltan datos obligatorios' });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO plansuscripcion (tipo, precio, id_gimnasio)
+       VALUES ($1, $2, $3)
+       RETURNING id_plan_suscripcion, tipo, precio, id_gimnasio`,
+      [tipo, precio, id_gimnasio]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Registrar la compra de una membresía por un cliente
+app.post('/api/membresias/comprar', async (req, res) => {
+  try {
+    const { id_cliente, id_plan_suscripcion, fecha_inicio, fecha_fin, id_gimnasio } = req.body;
+
+    if (!id_cliente || !id_plan_suscripcion || !fecha_inicio || !fecha_fin || !id_gimnasio) {
+      return res.status(400).json({ error: 'Faltan datos' });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO membresias (id_gimnasio, id_cliente, fecha_inicio, fecha_fin)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id_membresia, id_cliente, id_gimnasio, fecha_inicio, fecha_fin`,
+      [id_gimnasio, id_cliente, fecha_inicio, fecha_fin]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Ver las membresías activas de un cliente
+app.get('/api/clientes/:idCliente/membresias', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT m.id_membresia, p.tipo, p.precio, m.fecha_inicio, m.fecha_fin
+       FROM membresias m
+       JOIN plansuscripcion p ON m.id_gimnasio = p.id_gimnasio
+       WHERE m.id_cliente = $1
+       ORDER BY m.fecha_inicio DESC`,
+      [req.params.idCliente]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// membresia valida por 1 mes
+const fecha_inicio = new Date();
+const fecha_fin = new Date();
+fecha_fin.setMonth(fecha_fin.getMonth() + 1);
