@@ -30,10 +30,21 @@ email = '';
         localStorage.setItem('auth', 'true');
         localStorage.setItem('tipoUsuario', res.tipo_usuario);
         localStorage.setItem('id_usuario', String(res.id_usuario));
-        if (res.tipo_usuario === 'gimnasio') {
+        
+        if (res.tipo_usuario === 'cliente') {
+          // Obtener el id_cliente correspondiente
+          this.authApi.getClienteByUsuario(res.id_usuario).subscribe({
+            next: (clienteData) => {
+              localStorage.setItem('id_cliente', String(clienteData.id_cliente));
+              this.router.navigateByUrl('/');
+            },
+            error: (err) => {
+              console.error('Error al obtener datos del cliente:', err);
+              this.router.navigateByUrl('/');
+            }
+          });
+        } else if (res.tipo_usuario === 'gimnasio') {
           this.router.navigateByUrl('/gimnasio');
-        } else {
-          this.router.navigateByUrl('/');
         }
       },
       error: err => {

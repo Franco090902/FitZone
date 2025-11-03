@@ -145,7 +145,7 @@ app.get('/api/clases', async (req, res) => {
 app.get('/api/trainers', async (_req, res) => {
   try {
     const r = await pool.query(`
-      SELECT id_trainer, nombre, especialidad, contacto, id_gimnasio
+      SELECT id_trainer, nombre, especialidad, contacto, id_gimnasio, imagen
       FROM trainer
       ORDER BY nombre ASC
     `);
@@ -163,6 +163,24 @@ app.get('/api/clientes/by-usuario/:idUsuario', async (req, res) => {
        FROM cliente
        WHERE id_usuario = $1`,
       [req.params.idUsuario]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Cliente no encontrado' });
+    res.json(r.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Obtener información de un cliente por su ID
+app.get('/api/clientes/:id', async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT c.id_cliente, c.nombre, c.apellido, c.email, c.id_gimnasio,
+              g.nombre as gimnasio_nombre
+       FROM cliente c
+       LEFT JOIN gimnasio g ON g.id_gimnasio = c.id_gimnasio
+       WHERE c.id_cliente = $1`,
+      [req.params.id]
     );
     if (!r.rows.length) return res.status(404).json({ error: 'Cliente no encontrado' });
     res.json(r.rows[0]);
@@ -363,7 +381,39 @@ app.delete('/api/trainers/reservas/:id', async (req, res) => {
 
 
 
+//  OBTENER MEMBRESÍA DE UN CLIENTE
+app.get('/api/membresia/:idCliente', async (req, res) => {
+  const { idCliente } = req.params;
+  try {
+    const result = await pool.query(
+      'SELECT * FROM membresia WHERE id_cliente = $1',
+      [idCliente]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener membresía' });
+  }
+});
+
+//  OBTENER RESERVAS DEL CLIENTE
+app.get('/api/reservas/:idCliente', async (req, res) => {
+  const { idCliente } = req.params;
+  try {
+    const result = await pool.query(
+      'SELECT * FROM reserva WHERE id_cliente = $1 ORDER BY fecha DESC',
+      [idCliente]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener reservas' });
+  }
+});
+
+
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`API corriendo en puerto ${PORT}`);
 });

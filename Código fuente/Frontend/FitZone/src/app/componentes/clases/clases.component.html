@@ -46,7 +46,7 @@
               </span>
               <span>
                 <ion-icon name="calendar-outline"></ion-icon>
-                {{ clase.fecha_hora | date:'EEEE d/MM HH:mm' }}
+                {{ clase.fecha_hora | date:'EEEE d/MM HH:mm':ARG_TZ:'es-AR' }}
               </span>
             </div>
             <ion-button expand="block" color="success" (click)="reservarClase(clase)">
@@ -91,7 +91,7 @@
                   Reservas tuyas:
                   <ul>
                     <li *ngFor="let h of getHorariosTrainerTomados(trainer.id_trainer)">
-                      {{ h | date:'EEE d/MM HH:mm' }}
+                      {{ h | date:'EEE d/MM HH:mm':ARG_TZ:'es-AR' }}
                     </li>
                   </ul>
                 </ion-label>
@@ -139,7 +139,7 @@
                   Horarios ya reservados:
                   <ul>
                     <li *ngFor="let h of getHorariosEspacioTomados(espacio.id_espacio)">
-                      {{ h | date:'EEEE d/MM HH:mm' }}
+                      {{ h | date:'EEEE d/MM HH:mm':ARG_TZ:'es-AR' }}
                     </li>
                   </ul>
                 </ion-label>
